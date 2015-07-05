@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.jsoup.Jsoup;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,12 +37,14 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         try {
+            //return Jsoup.connect(params[0]).get().outerHtml();
+
             if (checkNotConnected()) return context.getString(R.string.no_network);
 
             URL url = new URL(params[0]);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(20000);
+            conn.setReadTimeout(20000);
+            conn.setConnectTimeout(30000);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             conn.connect();
