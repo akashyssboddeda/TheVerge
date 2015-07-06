@@ -37,7 +37,7 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         try {
-            //return Jsoup.connect(params[0]).get().outerHtml();
+            //TODO use Jsoup.connect(params[0]).get();
 
             if (checkNotConnected()) return context.getString(R.string.no_network);
 
