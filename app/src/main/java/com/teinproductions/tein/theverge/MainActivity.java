@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MainActivity extends AppCompatActivity implements DownloadAsyncTask.OnLoadedListener {
@@ -32,13 +33,15 @@ public class MainActivity extends AppCompatActivity implements DownloadAsyncTask
     @Override
     public void onLoaded(String s) {
         if (check400Number(s) || getString(R.string.no_network).equals(s)) {
-            Toast.makeText(this, "Error occurred", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Document doc = Jsoup.parse(s);
-        Elements big7 = doc.getElementsByClass("big7").first().getElementsByTag("a");
-
-        recyclerView.setAdapter(new Big7Adapter(this, big7));
+        Element big7Div = doc.getElementsByClass("big7").first();
+        if (big7Div != null) {
+            Elements big7 = doc.getElementsByClass("big7").first().getElementsByTag("a");
+            recyclerView.setAdapter(new Big7Adapter(this, big7));
+        }
     }
 
     private boolean check400Number(String s) {

@@ -8,10 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -45,32 +46,20 @@ public class Big7Adapter extends RecyclerView.Adapter<Big7Adapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         Element a = data.get(i);
 
-        viewHolder.image.setImageBitmap(null);
+        viewHolder.image.setImageDrawable(null);
         String imageURL;
         try {
             imageURL = a.getElementsByTag("div").first().attr("data-original");
             if (imageURL != null) {
-                new ImageDownloaderTask(new ImageDownloaderTask.OnLoadedListener() {
+                Picasso.with(context).load(imageURL).into(viewHolder.image, new Callback() {
                     @Override
-                    public void onLoaded(Bitmap bm) {
-                        if (bm == null) {
-                            viewHolder.image.setVisibility(View.GONE);
-                        } else /*if (Build.VERSION.SDK_INT >= 16)*/ {
-                            Animation fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fadein);
-                            viewHolder.image.setImageBitmap(bm);
-                            viewHolder.image.setVisibility(View.VISIBLE);
-                            viewHolder.setRatio();
-                            viewHolder.image.startAnimation(fadeInAnimation);
-                            /*viewHolder.image.animate().alpha(1f)
-                                    .setDuration(context.getResources().getInteger(android.R.integer.config_shortAnimTime))
-                                    .start();
-                        } else {
-                            viewHolder.image.setImageBitmap(bm);
-                            viewHolder.image.setVisibility(View.VISIBLE);
-                            viewHolder.setRatio();*/
-                        }
+                    public void onSuccess() {
+                        viewHolder.setRatio();
                     }
-                }).execute(imageURL);
+
+                    @Override
+                    public void onError() {/*ignored*/}
+                });
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -79,7 +68,10 @@ public class Big7Adapter extends RecyclerView.Adapter<Big7Adapter.ViewHolder> {
         String title = a.getElementsByTag("h2").first().text();
         String subtext = a.getElementsByClass("byline").first().ownText();
 
-        if (title != null) viewHolder.primaryText.setText(title);
+        if (title != null) {
+            viewHolder.primaryText.setText(title);
+            viewHolder.image.setContentDescription(title);
+        }
         if (subtext != null) viewHolder.subtext.setText(subtext);
     }
 
