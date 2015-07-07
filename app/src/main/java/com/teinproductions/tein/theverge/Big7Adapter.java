@@ -32,6 +32,10 @@ public class Big7Adapter extends RecyclerView.Adapter<Big7Adapter.ViewHolder> {
         this.data = data;
     }
 
+    public void setData(Elements data) {
+        this.data = data;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item, viewGroup, false));
