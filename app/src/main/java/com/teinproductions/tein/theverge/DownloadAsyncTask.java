@@ -7,8 +7,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.jsoup.Jsoup;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +20,7 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
     private OnLoadedListener listener;
 
     interface OnLoadedListener {
-        void onLoaded(String s);
+        void onLoaded(String s, boolean fromCache);
     }
 
     public DownloadAsyncTask(Context context) {
@@ -39,7 +37,7 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
         try {
             //TODO use Jsoup.connect(params[0]).get();
 
-            if (checkNotConnected()) return context.getString(R.string.no_network);
+            if (checkNotConnected()) return null;
 
             URL url = new URL(params[0]);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -83,7 +81,7 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        listener.onLoaded(s);
+        listener.onLoaded(s, false);
     }
 
     public void setListener(OnLoadedListener listener) {
