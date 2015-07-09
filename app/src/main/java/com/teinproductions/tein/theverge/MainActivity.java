@@ -1,6 +1,11 @@
 package com.teinproductions.tein.theverge;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
+import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -20,8 +27,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketTimeoutException;
 
-public class MainActivity extends AppCompatActivity implements DownloadAsyncTask.OnLoadedListener {
+public class MainActivity extends AppCompatActivity {
 
     public static final String CACHE_FILE_NAME = "big7cache";
 
@@ -42,54 +50,90 @@ public class MainActivity extends AppCompatActivity implements DownloadAsyncTask
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(false, false);
             }
         });
 
         // First load from cache
-        String cache = getFile();
-        if (cache != null) onLoaded(cache, false); // False, otherwise "Offline" message is shown
+        //String cache = getFile();
+        //if (cache != null) onLoaded(cache, false); // False, otherwise "Offline" message is shown
 
-        refresh();
+        refresh(true, false);
     }
 
-    private void refresh() {
+    private void refresh(final boolean firstTryCache, final boolean alreadyTriedCache) {
         srLayout.setRefreshing(true);
-        new DownloadAsyncTask(this, this).execute("http://www.theverge.com/");
-    }
+        new AsyncTask<Void, Void, Elements>() {
+            boolean fromCache = false;
+            String errorMessage;
+            String toCache;
 
-    @Override
-    public void onLoaded(String page, boolean fromCache) {
-        try {
-            Document doc = Jsoup.parse(page); // Throws IllegalArgumentException if page == null
-            Element big7Div = doc.getElementsByClass("big7").first();
-            Elements big7 = doc.getElementsByClass("big7").first().getElementsByTag("a");
-            //recyclerView.setAdapter(new Big7Adapter(this, big7));
-            ((Big7Adapter) recyclerView.getAdapter()).setData(big7);
-            recyclerView.getAdapter().notifyDataSetChanged();
+            @Override
+            protected Elements doInBackground(Void... params) {
+                try {
+                    if (firstTryCache && !alreadyTriedCache) {
+                        // First, try with cache:
+                        throw new IOException();
+                    }
 
-            // Everything went right so the file can be cached
-            if (!fromCache) saveFile(big7Div.outerHtml());
 
-            if (fromCache) {
-                // Cache was loaded successfully, show out of date snackbar
-                Toast.makeText(this, "Offline: data may be out of date", Toast.LENGTH_SHORT).show();
+                    if (checkNotConnected(MainActivity.this))
+                        throw new NullPointerException();
+
+                    Document doc = Jsoup.connect("http://www.theverge.com/").get();
+                    Element big7Div = doc.getElementsByClass("big7").first();
+                    toCache = big7Div.outerHtml();
+
+                    return big7Div.getElementsByTag("a");
+                } catch (IOException | NullPointerException e) {
+                    if (e instanceof HttpStatusException || e instanceof UnsupportedMimeTypeException)
+                        errorMessage = "No connection to the server";
+                    else if (e instanceof SocketTimeoutException)
+                        errorMessage = "Connection timed out";
+                    else if (e instanceof IOException) errorMessage = "No connection to the server";
+                    else errorMessage = "Please check your connection";
+
+                    // Try with cache
+                    fromCache = true;
+                    String cache = getFile();
+                    if (cache == null) return null;
+                    Document doc = Jsoup.parse(cache);
+                    return doc.getElementsByClass("big7").first().getElementsByTag("a");
+                }
             }
 
-            srLayout.setRefreshing(false);
-        } catch (NullPointerException | IllegalArgumentException e) {
-            e.printStackTrace();
-
-            if (fromCache) {
-                // No internet connection and no cache file
-                // Show "No connection established" full screen
-                Toast.makeText(this, "No connection established", Toast.LENGTH_SHORT).show();
+            @Override
+            protected void onPostExecute(Elements big7) {
                 srLayout.setRefreshing(false);
-            } else {
-                // No proper internet retrieval but not tried cache yet
-                onLoaded(getFile(), true);
+
+                if (!fromCache && toCache != null) {
+                    // Cache the file
+                    saveFile(toCache);
+                } else if (fromCache) {
+                    if (firstTryCache) {
+                        // Load the fetched data into the recyclerView
+                        ((Big7Adapter) recyclerView.getAdapter()).setData(big7);
+                        recyclerView.getAdapter().notifyDataSetChanged();
+
+                        // Now try from the web:
+                        refresh(false, true);
+                        return;
+                    }
+
+                    // Display the error message in a snackbar
+                    if (alreadyTriedCache) errorMessage = "Offline mode: data may be outdated";
+                    Snackbar.make(findViewById(R.id.root), errorMessage, Snackbar.LENGTH_LONG).show();
+                    if (big7 == null) {
+                        // TODO: 9-7-2015 Display error message in card in recyclerView
+                        return;
+                    }
+                }
+
+                // Load the fetched data into the recyclerView
+                ((Big7Adapter) recyclerView.getAdapter()).setData(big7);
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
-        }
+        }.execute();
     }
 
     @Override
@@ -101,11 +145,18 @@ public class MainActivity extends AppCompatActivity implements DownloadAsyncTask
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
-            refresh();
+            refresh(false, false);
             return true;
         }
 
         return false;
+    }
+
+    public static boolean checkNotConnected(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        return networkInfo == null || !networkInfo.isConnected();
     }
 
     private String getFile() {

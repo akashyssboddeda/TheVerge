@@ -1,3 +1,4 @@
+/*
 package com.teinproductions.tein.theverge;
 
 
@@ -6,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,40 +36,24 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    public String doInBackground(String... params) {
         try {
             //TODO use Jsoup.connect(params[0]).get();
-
-            if (checkNotConnected()) return null;
-
-            URL url = new URL(params[0]);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000);
-            conn.setConnectTimeout(30000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.d("THEVERGE", "Response: " + response);
-
-            if (response >= 400) return "" + response;
-
-            InputStream is = conn.getInputStream();
-            return read(is);
+            return fetchWebPage(context, params[0]);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private boolean checkNotConnected() {
+    public static boolean checkNotConnected(Context context) {
         ConnectivityManager connManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         return networkInfo == null || !networkInfo.isConnected();
     }
 
-    private String read(InputStream inputStream) throws IOException {
+    public static String read(InputStream inputStream) throws IOException {
         InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
         BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -87,4 +74,25 @@ public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
     public void setListener(OnLoadedListener listener) {
         this.listener = listener;
     }
+
+
+    public static String fetchWebPage(Context context, String URL) throws IOException {
+        if (checkNotConnected(context)) return null;
+
+        URL url = new URL(URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(20000);
+        conn.setConnectTimeout(30000);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.connect();
+        int response = conn.getResponseCode();
+        //Log.d("THEVERGE", "Response: " + response);
+
+        if (response >= 400) return "" + response;
+
+        InputStream is = conn.getInputStream();
+        return read(is);
+    }
 }
+*/
