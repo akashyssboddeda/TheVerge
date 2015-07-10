@@ -1,5 +1,6 @@
 package com.teinproductions.tein.theverge;
 
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,13 +14,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new Big7Adapter(this, new Elements(0)));
+        recyclerView.setAdapter(new HeroAdapter(this, new Elements(0)));
 
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -53,10 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 refresh(false, false);
             }
         });
-
-        // First load from cache
-        //String cache = getFile();
-        //if (cache != null) onLoaded(cache, false); // False, otherwise "Offline" message is shown
 
         refresh(true, false);
     }
@@ -81,10 +76,10 @@ public class MainActivity extends AppCompatActivity {
                         throw new NullPointerException();
 
                     Document doc = Jsoup.connect("http://www.theverge.com/").get();
-                    Element big7Div = doc.getElementsByClass("big7").first();
-                    toCache = big7Div.outerHtml();
+                    Elements elements = doc.getElementsByClass("m-hero__slot-link");
+                    toCache = elements.outerHtml();
 
-                    return big7Div.getElementsByTag("a");
+                    return elements;
                 } catch (IOException | NullPointerException e) {
                     if (e instanceof HttpStatusException || e instanceof UnsupportedMimeTypeException)
                         errorMessage = "No connection to the server";
@@ -98,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     String cache = getFile();
                     if (cache == null) return null;
                     Document doc = Jsoup.parse(cache);
-                    return doc.getElementsByClass("big7").first().getElementsByTag("a");
+                    return doc.getElementsByClass("m-hero__slot-link");
                 }
             }
 
@@ -112,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (fromCache) {
                     if (firstTryCache) {
                         // Load the fetched data into the recyclerView
-                        ((Big7Adapter) recyclerView.getAdapter()).setData(big7);
+                        ((HeroAdapter) recyclerView.getAdapter()).setData(big7);
                         recyclerView.getAdapter().notifyDataSetChanged();
 
                         // Now try from the web:
@@ -130,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Load the fetched data into the recyclerView
-                ((Big7Adapter) recyclerView.getAdapter()).setData(big7);
+                ((HeroAdapter) recyclerView.getAdapter()).setData(big7);
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
         }.execute();

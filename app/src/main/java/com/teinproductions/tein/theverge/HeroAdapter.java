@@ -1,9 +1,12 @@
 package com.teinproductions.tein.theverge;
 
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +25,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Big7Adapter extends RecyclerView.Adapter<Big7Adapter.ViewHolder> {
+public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
 
     private Context context;
     private Elements data;
 
-    public Big7Adapter(Context context, Elements data) {
+    public HeroAdapter(Context context, Elements data) {
         this.context = context;
         this.data = data;
     }
@@ -77,14 +80,28 @@ public class Big7Adapter extends RecyclerView.Adapter<Big7Adapter.ViewHolder> {
             viewHolder.image.setContentDescription(title);
         }
         if (subtext != null) viewHolder.subtext.setText(subtext);
+
+        final String href = a.attr("href");
+        // TODO: 9-7-2015 Check if href is not a re/code web page
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ArticleActivity.class);
+                intent.putExtra(ArticleActivity.ARTICLE_URL, href);
+                context.startActivity(intent);
+                // TODO does startActivity have to be called in MainActivity.class?
+            }
+        });
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
+        private CardView cardView;
         private TextView primaryText, subtext;
         private ImageView image;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            cardView = (CardView) itemView.findViewById(R.id.cardView);
             primaryText = (TextView) itemView.findViewById(R.id.primary_text);
             subtext = (TextView) itemView.findViewById(R.id.subtext);
             image = (ImageView) itemView.findViewById(R.id.imageView);
