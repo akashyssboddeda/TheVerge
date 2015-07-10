@@ -23,13 +23,20 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/articleMainImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:textColor="@android:color/black"
                 android:textSize="34sp"
                 tools:text="Apple Music will give you control over audio quality in iOS 9" />
@@ -38,6 +45,8 @@
                 android:id="@+id/author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
                 tools:text="By Micah Singleton " />
@@ -46,6 +55,8 @@
                 android:id="@+id/subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:textSize="18sp"
                 android:textStyle="italic"
                 tools:text="In a rural corner of the Midwest, GE pushes its next-generation jet engines to their limits" />
