@@ -2,7 +2,6 @@ package com.teinproductions.tein.theverge;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -86,9 +85,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ArticleActivity.class);
-                intent.putExtra(ArticleActivity.ARTICLE_URL, href);
-                context.startActivity(intent);
+                ArticleActivity.openArticle(context, href);
                 // TODO does startActivity have to be called in MainActivity.class?
             }
         });

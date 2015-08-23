@@ -1,19 +1,26 @@
 package com.teinproductions.tein.theverge;
 
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.URLUtil;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -107,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
                 } else if (fromCache) {
                     if (firstTryCache) {
                         // Load the fetched data into the recyclerView
-                        ((HeroAdapter) recyclerView.getAdapter()).setData(big7);
-                        recyclerView.getAdapter().notifyDataSetChanged();
+                        if (big7 != null) {
+                            ((HeroAdapter) recyclerView.getAdapter()).setData(big7);
+                            recyclerView.getAdapter().notifyDataSetChanged();
+                        }
 
                         // Now try from the web:
                         refresh(false, true);

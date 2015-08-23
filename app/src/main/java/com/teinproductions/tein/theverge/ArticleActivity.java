@@ -1,5 +1,7 @@
 package com.teinproductions.tein.theverge;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,6 +56,12 @@ public class ArticleActivity extends AppCompatActivity {
         mainImg = (ImageView) findViewById(R.id.articleMainImage);
 
         refresh();
+    }
+
+    public static void openArticle(Context context, String link) {
+        Intent intent = new Intent(context, ArticleActivity.class);
+        intent.putExtra(ArticleActivity.ARTICLE_URL, link);
+        context.startActivity(intent);
     }
 
     interface ArticlePiece {
@@ -127,7 +135,6 @@ public class ArticleActivity extends AppCompatActivity {
                     return null;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(ArticleActivity.this, "IOException", Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }

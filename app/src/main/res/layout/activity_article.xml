@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:elevation="6dp"
-        app:theme="@style/ToolbarTheme" />
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <ScrollView
         android:layout_width="match_parent"

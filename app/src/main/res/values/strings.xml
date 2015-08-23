@@ -6,4 +6,5 @@
     <string name="no_network">Not connected to a network</string>
     <string name="refresh">Refresh</string>
     <string name="enter_url">Enter URL</string>
+    <string name="enter_a_url">Enter a url</string>
 </resources>
