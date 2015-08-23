@@ -7,4 +7,9 @@
         android:orderInCategory="100"
         android:title="@string/refresh"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/enterURL"
+        android:orderInCategory="101"
+        android:title="@string/enter_url"
+        app:showAsAction="never" />
 </menu>

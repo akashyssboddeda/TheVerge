@@ -1,5 +1,6 @@
 package com.teinproductions.tein.theverge;
 
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class ArticleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         articleURL = getIntent().getStringExtra(ARTICLE_URL);
+        //articleURL = "http://www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream";
 
         ll = (LinearLayout) findViewById(R.id.linearLayout);
         titleTV = (TextView) findViewById(R.id.title);
@@ -54,26 +56,40 @@ public class ArticleActivity extends AppCompatActivity {
         refresh();
     }
 
+    interface ArticlePiece {
+    }
+
+    class Text implements ArticlePiece {
+        static final int PARAGRAPH = 0;
+        static final int THEVERGE_HEADER = 1;
+        static final int H2HEADER = 2;
+        static final int SMALL = 3;
+        static final int H3HEADER = 4;
+
+        final String text;
+        final int type;
+
+        public Text(String text, int type) {
+            this.text = text;
+            this.type = type;
+        }
+    }
+
+    class Image implements ArticlePiece {
+        final String url;
+
+        public Image(String url) {
+            this.url = url;
+        }
+    }
+
+    class Whitespace implements ArticlePiece {
+    }
+
     private void refresh() {
         new AsyncTask<Void, Void, Void>() {
             String title, author, date, sub, imgSrc;
-            ArrayList<CharSequence> paragraphs = new ArrayList<>();
-
-            class ImageURL implements CharSequence {
-                final String url;
-                public ImageURL(String url) {
-                    this.url = url;
-                }
-                public int length() {
-                    return url.length();
-                }
-                public char charAt(int index) {
-                    return url.charAt(index);
-                }
-                public CharSequence subSequence(int start, int end) {
-                    return url.subSequence(start, end);
-                }
-            }
+            ArrayList<ArticlePiece> articlePieces = new ArrayList<>();
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -94,6 +110,9 @@ public class ArticleActivity extends AppCompatActivity {
                         sub = document.getElementsByAttributeValueContaining(
                                 "data-remote-headline-edit", "summary").first().text();
                     } catch (NullPointerException ignored) {/*ignored*/}
+
+                    // Whitespace below title and author
+                    articlePieces.add(new Whitespace());
 
                     // Figure out whether it's an article (m-article), review (m-review) or feature (m-feature)
                     Element article = document.getElementsByTag("article").first();
@@ -116,12 +135,84 @@ public class ArticleActivity extends AppCompatActivity {
             private void handleArticle(Element article) {
                 loadMainArticleImage(article);
                 try {
-                    Elements text = article.getElementsByClass("m-article__entry")
-                            .first().getElementsByTag("p");
-                    for (int i = 0; i < text.size(); i++) {
-                        paragraphs.add(text.get(i).text());
-                    }
+                    Elements elements = article.getElementsByClass("m-article__entry")
+                            .first().children();
+                    handleParagraphs(elements);
                 } catch (NullPointerException ignored) {/*ignored*/}
+            }
+
+            /**
+             * Handle pieces of articles with mainly paragraphs in them.
+             * For example: main article content, or "m-snippet thin" div of review.
+             * @param elements The elements at the "p" level (so including the p-s).
+             */
+            private void handleParagraphs(Elements elements) {
+                for (int i = 0; i < elements.size(); i++) {
+                    Element element = elements.get(i);
+                    String tagName = element.tagName();
+                    if ("p".equals(tagName)) {
+                        if (element.children().size() > 0 && "q".equals(element.child(0).tagName())) {
+                            // Big red italic heading
+                            articlePieces.add(new Whitespace());
+                            articlePieces.add(new Text(element.text(), Text.THEVERGE_HEADER));
+                            articlePieces.add(new Whitespace());
+                        } else if (element.children().size() > 0 && "small".equals(element.child(0).tagName())) {
+                            // Small text:
+                            // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                            articlePieces.add(new Text(element.text(), Text.SMALL));
+                        } else if (element.children().size() > 0 && "img".equals(element.child(0).tagName())) {
+                            addImage(element);
+                        } else if (element.html().isEmpty() || element.html().equals(" ")) {
+                            // Add nothing.
+                        } else {
+                            // Regular paragraph
+                            articlePieces.add(new Text(element.text(), Text.PARAGRAPH));
+                        }
+                    } else if ("q".equals(tagName)) {
+                        // Big red italic heading
+                        articlePieces.add(new Whitespace());
+                        articlePieces.add(new Text(element.text(), Text.THEVERGE_HEADER));
+                        articlePieces.add(new Whitespace());
+                    } else if ("h2".equals(tagName)) {
+                        // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                        articlePieces.add(new Whitespace());
+                        articlePieces.add(new Text(element.text(), Text.H2HEADER));
+                        articlePieces.add(new Whitespace());
+                    } else if ("h3".equals(tagName)) {
+                        // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                        articlePieces.add(new Whitespace());
+                        articlePieces.add(new Text(element.text(), Text.H3HEADER));
+                        articlePieces.add(new Whitespace());
+                    } else if ("figure".equals(tagName)) {
+                        // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                        try {
+                            String imgURL = element.getElementsByAttribute("data-original").first().attr("data-original");
+                            articlePieces.add(new Image(imgURL));
+                        } catch (NullPointerException ignored) {/*ignored*/}
+                    } else if ("img".equals(tagName)) {
+                        addImage(element);
+                    } else if ("aside".equals(tagName)) {
+                        addImage(element);
+                    }
+                    // TODO handle <ul>: www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                }
+            }
+
+            private void addImage(Element element) {
+                String url;
+
+                Element dataOriginalImg = element.getElementsByAttribute("data-original").first();
+                if (dataOriginalImg != null) {
+                    url = dataOriginalImg.attr("data-original");
+                    articlePieces.add(new Image(url));
+                    return;
+                }
+
+                Element srcImg = element.getElementsByAttribute("src").first();
+                if (srcImg != null) {
+                    url = srcImg.attr("src");
+                    articlePieces.add(new Image(url));
+                }
             }
 
             private void handleReview(Element article) {
@@ -131,7 +222,7 @@ public class ArticleActivity extends AppCompatActivity {
                 handleIntro(article, "m-review__intro");
 
                 Elements body = article.getElementsByAttributeValueContaining(
-                        "itemprop", "reviewBody").first().getElementsByTag("div");
+                        "itemprop", "reviewBody").first().children();
                 handleBody(body);
             }
 
@@ -139,40 +230,61 @@ public class ArticleActivity extends AppCompatActivity {
                 loadMainArticleImage(article);
                 handleIntro(article, "m-feature__intro");
 
-                Elements body = article.getElementsByClass("m-feature__body").first().getElementsByTag("div");
+                Elements body = article.getElementsByClass("m-feature__body").first().children();
                 handleBody(body);
             }
 
             private void handleIntro(Element article, String introDivClassName) {
-                Elements intro = article.getElementsByClass(introDivClassName).first().getElementsByTag("p");
-                for (int i = 0; i < intro.size(); i++) {
-                    paragraphs.add(intro.get(i).text());
-                }
+                Elements intro = article.getElementsByClass(introDivClassName).first().children();
+                handleParagraphs(intro);
+
                 // Add a whitespace beneath the intro:
-                paragraphs.add("\n");
+                articlePieces.add(new Whitespace());
             }
 
             private void handleBody(Elements snippetDivs) {
                 for (int i = 0; i < snippetDivs.size(); i++) {
-                    Element current = snippetDivs.get(i);
-                    if (current.classNames().contains("thin")) {
-                        Elements ps = current.getElementsByTag("p");
+                    Element snippet = snippetDivs.get(i);
+                    if (snippet.classNames().contains("thin")
+                            || snippet.classNames().contains("full-image")
+                            || snippet.classNames().contains("e-image")) {
+                        /*Elements ps = snippet.getElementsByTag("p");
                         for (int j = 0; j < ps.size(); j++) {
                             // Figure out whether this is a big text
                             Element q = ps.get(j).getElementsByTag("q").first();
                             if (q == null) {
                                 // Not a big text
-                                paragraphs.add(ps.get(j).text());
+                                articlePieces.add(new Text(ps.get(j).text(), Text.PARAGRAPH));
                             } else {
                                 // A big text
-                                // TODO: 9-7-2015 Add big texts
+                                articlePieces.add(new Text(ps.get(j).text(), Text.THEVERGE_HEADER));
                             }
-                        }
-                    } else if (current.classNames().contains("full-image")) {
-                        String imgURL = current.getElementsByAttribute("src").first().attr("src");
-                        paragraphs.add(new ImageURL(imgURL));
-                    }
+                        }*/
+                        Elements elements = snippet.children();
+                        handleParagraphs(elements);
+                    }/* else if (snippet.classNames().contains("full-image") || snippet.classNames().contains("e-image")) {
+                        // TODO e-images are now also shown when they're inside an m-snippet thin div.
+                        *//* Sometimes there is no snippet wrapper div around the an e-image,
+                        and the <figure class="e-image"> is then on the same level as the snippets.
+                        Example: http://www.theverge.com/2015/7/6/8887691/gopro-hero-4-session-camera-cube-hands-on *//*
+                        String imgURL = getFullImage(snippet);
+                        if (imgURL != null) articlePieces.add(new Image(imgURL));
+                    }*/
                 }
+
+                // TODO: 10-7-2015 photo essays! expample: http://www.theverge.com/2015/7/6/8887691/gopro-hero-4-session-camera-cube-hands-on
+            }
+
+            private String getFullImage(Element snippet) {
+                Element figure = snippet.getElementsByClass("e-image").first();
+                if (figure != null) {
+                    Element span = figure.getElementsByTag("span").first();
+                    return span.getElementsByAttribute("data-original").first().attr("data-original");
+                }
+                Element img = snippet.getElementsByAttribute("src").first();
+                if (img != null) return img.attr("src");
+
+                return null;
             }
 
             private void loadMainArticleImage(Element article) {
@@ -198,18 +310,58 @@ public class ArticleActivity extends AppCompatActivity {
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                // Convert 16dp padding to px
-                final int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                textViewParams.setMargins(px, 0, px, 0);
-                for (int i = 0; i < paragraphs.size(); i++) {
-                    if (paragraphs.get(i) instanceof String) {
+                // Convert 16dp and 5dp padding to px
+                final int px16dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+                final int px5dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+                //textViewParams.setMargins(px, 0, px, 0);
+                for (int i = 0; i < articlePieces.size(); i++) {
+                    ArticlePiece piece = articlePieces.get(i);
+                    if (piece instanceof Text) {
                         TextView tv = new TextView(ArticleActivity.this);
-                        tv.setText(paragraphs.get(i));
+                        tv.setText(((Text) piece).text);
+                        tv.setPadding(px16dp, 0, px16dp, 0);
+
+                        switch (((Text) piece).type) {
+                            case Text.PARAGRAPH:
+                                tv.setTextColor(getResources().getColor(android.R.color.black));
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                                break;
+                            case Text.H2HEADER:
+                                tv.setTextColor(getResources().getColor(android.R.color.black));
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                tv.setTypeface(null, Typeface.BOLD);
+                                break;
+                            case Text.H3HEADER:
+                                tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                tv.setTypeface(null, Typeface.BOLD);
+                                break;
+                            case Text.THEVERGE_HEADER:
+                                String text = ((Text) piece).text;
+                                if (text.startsWith("\"") && text.endsWith("\"")) {
+                                    tv.setText(text.substring(1, text.length() - 1));
+                                }
+
+                                tv.setText(tv.getText().toString().toUpperCase());
+                                tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+                                tv.setTypeface(null, Typeface.ITALIC);
+                        }
+
                         ll.addView(tv, textViewParams);
-                    } else if (paragraphs.get(i) instanceof ImageURL) {
+                    } else if (piece instanceof Whitespace) {
+                        ll.addView(new TextView(ArticleActivity.this), textViewParams);
+                        // TODO: 2-8-2015 Use android.support.v4.widget.Space instead of empty TextView
+                    } else if (piece instanceof Image) {
                         ImageView imageView = new ImageView(ArticleActivity.this);
+                        imageView.setPadding(0, px5dp, 0, px5dp);
                         ll.addView(imageView, imageViewParams);
-                        Picasso.with(ArticleActivity.this).load(((ImageURL) paragraphs.get(i)).url).into(imageView);
+                        // Set 16:9 ratio on imageView  TODO: 10-7-2015 Show full image
+                        //imageView.getLayoutParams().height = ll.getWidth() / 16 * 9;
+                        //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        imageView.requestLayout();
+                        Picasso.with(ArticleActivity.this).load(((Image) piece).url)
+                                .resize(ll.getWidth(), imageView.getHeight()).into(imageView);
                     }
                 }
             }
@@ -243,11 +395,11 @@ public class ArticleActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
         }
-
         return false;
     }
 }

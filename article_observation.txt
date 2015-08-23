@@ -1,0 +1,75 @@
+Three types of articles:
+    - Article
+    - Review
+    - Feature
+
+ARTICLE ---------------------------------------------------------------------------------------------------------------------------------
+
+<div class="m-article__entry">
+    (<p class="badge-bbc">...</p>)
+    <p>Text</p>
+    <p>Text</p>
+    <h3>H3 heading</h3> (www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream)
+    <p>Text</p>
+    <h2>H2 heading</h2> (www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream)
+    <p>Text</p>
+    <p>Text</p>
+    "Text outside of paragraph"
+    <p>
+        <q class="right/left">
+            <span>BIG RED ITALIC HEADING</span>
+        </q>
+    </p>
+    <p>Text</p>
+    <p> </p>
+    <figure class="e-image">
+        <span>
+            <img class="vox-lazy-load lazy-loaded" blah-blah>
+        </span>
+    </figure>
+    <p>
+        <small>
+            <i>Small text, like picture text: www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream</i>
+        </small>
+    </p>
+    <h2>Who should I follow?</h2>
+    <ul>
+        <li><span></span</li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+
+REVIEW ----------------------------------------------------------------------------------------------------------------------------------
+
+<span itemprop="reviewBody">
+    <p> </p>
+    <div class="m-snippet full-image>
+        <img src="blah-blah">
+    </div>
+    <div class="m-snippet thin>
+        <p>Text</p>
+        <p>Text</p>
+        <p>
+            ::before
+            <q>Big red text</q>
+            ::after
+        </p>
+        <p>Text</p>
+        <q>Big red title</q>
+        <aside> // http://www.theverge.com/2015/7/8/8911731/apple-music-review
+            <p>
+                <img src="blah-blah">
+            </p>
+        </aside>
+        <p>
+            <img src="blah-blah">
+        </p>
+        <p>
+            <q>Big red title</q>
+        </p>
+    </div>
+</span>
+TODO review wrap-up
+
+

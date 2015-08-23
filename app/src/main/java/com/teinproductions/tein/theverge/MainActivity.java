@@ -139,11 +139,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.refresh) {
-            refresh(false, false);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                refresh(false, false);
+                return true;
+            case R.id.enterURL:
+                return true;
         }
-
         return false;
     }
 
