@@ -2,11 +2,9 @@ package com.teinproductions.tein.theverge;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +14,12 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.Set;
 
 public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
 
@@ -36,6 +33,28 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
 
     public void setData(Elements data) {
         this.data = data;
+        filterData();
+    }
+
+    /**
+     * Makes sure all the items in {@code data} are real links
+     * to articles and not ads or other things not (yet) supported
+     */
+    private void filterData() {
+        // TODO some articles still leak through this filter and are shown as "Unknown title" card
+        for (Iterator<Element> iterator = data.iterator(); iterator.hasNext();) {
+            Element element = iterator.next();
+            Set classNames = element.classNames();
+            if (classNames.contains("-entry-rock") || classNames.contains("-ad")) {
+                iterator.remove();
+            }
+        }
+        /*for (int i = 0; i < data.size(); i++) {
+            Set classNames = data.get(i).classNames();
+            if (classNames.contains("-entry-rock") || classNames.contains("-ad")) {
+                data.remove(i);
+            }
+        }*/
     }
 
     @Override
@@ -50,46 +69,9 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
-        Element a = data.get(i);
-
-        viewHolder.image.setImageDrawable(null);
-        String imageURL;
-        try {
-            imageURL = a.getElementsByTag("div").first().attr("data-original");
-            if (imageURL != null) {
-                Picasso.with(context).load(imageURL).into(viewHolder.image, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        viewHolder.setRatio();
-                    }
-
-                    @Override
-                    public void onError() {/*ignored*/}
-                });
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        String title = a.getElementsByTag("h2").first().text();
-        String subtext = a.getElementsByClass("byline").first().ownText();
-
-        if (title != null) {
-            viewHolder.primaryText.setText(title);
-            viewHolder.image.setContentDescription(title);
-        }
-        if (subtext != null) viewHolder.subtext.setText(subtext);
-
-        final String href = a.attr("href");
-        // TODO: 9-7-2015 Check if href is not a re/code web page
-        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ArticleActivity.openArticle(context, href);
-                // TODO does startActivity have to be called in MainActivity.class?
-            }
-        });
+        viewHolder.bind(data.get(i));
     }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
@@ -109,39 +91,94 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
             image.getLayoutParams().height = image.getWidth() / 16 * 9;
             image.requestLayout();
         }
-    }
 
-    static class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+        void bind(Element element) {
+            image.setImageDrawable(null);
+            String imageURL = parseImageURL(element);
+            Picasso.with(context).load(imageURL).into(image, new Callback() {
+                @Override
+                public void onSuccess() {
+                    setRatio();
+                }
 
-        private OnLoadedListener listener;
+                @Override
+                public void onError() {/*ignored*/}
+            });
 
-        interface OnLoadedListener {
-            void onLoaded(Bitmap bm);
+            String title = parseTitle(element);
+            primaryText.setText(title);
+            image.setContentDescription(title);
+            subtext.setText(parseAuthor(element));
+
+            final String articleLink = parseArticleLink(element);
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: 9-7-2015 Check if href is not a re/code web page
+                    ArticleActivity.openArticle(context, articleLink);
+                }
+            });
         }
 
-        public ImageDownloaderTask(OnLoadedListener listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
+        String parseTitle(Element element) {
             try {
-                URL url = new URL(params[0]);
-                URLConnection conn = url.openConnection();
-                return BitmapFactory.decodeStream(conn.getInputStream());
-            } catch (MalformedURLException e) {
+                if (element.classNames().contains("m-hero__slot")) {
+                    Element a = element.getElementsByClass("m-hero__slot-link").first();
+                    Element h2 = a.getElementsByTag("h2").first();
+                    return h2.text();
+                } else if (element.classNames().contains("m-entry-slot")) {
+                    Element h3 = element.getElementsByTag("h3").first();
+                    return h3.text();
+                } else throw new NullPointerException();
+            } catch (NullPointerException e) {
                 e.printStackTrace();
-                return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                return "Unknown title";
             }
         }
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (listener != null) {
-                listener.onLoaded(bitmap);
+        String parseAuthor(Element element) {
+            try {
+                if (element.classNames().contains("m-hero__slot")) {
+                    return element.getElementsByClass("byline").first().text();
+                } else if (element.classNames().contains("m-entry-slot")) {
+                    return element.getElementsByClass("author").first().text();
+                } else throw new NullPointerException();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return "Unknown author";
+            }
+        }
+
+        String parseArticleLink(Element element) {
+            try {
+                if (element.classNames().contains("m-hero__slot")) {
+                    Element a = element.getElementsByClass("m-hero__slot-link").first();
+                    return a.attr("href");
+                } else if (element.classNames().contains("m-entry-slot")) {
+                    Element h3 = element.getElementsByTag("h3").first();
+                    Element a = h3.getElementsByTag("a").first();
+                    return a.attr("href");
+                } else throw new NullPointerException();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+
+        String parseImageURL(Element element) {
+            try {
+                if (element.classNames().contains("m-hero__slot")) {
+                    Element a = element.getElementsByClass("m-hero__slot-link").first();
+                    Element imgDiv = a.getElementsByAttribute("data-original").first();
+                    return imgDiv.attr("data-original");
+                } else if (element.classNames().contains("m-entry-slot")) {
+                    Element imgDiv = element.getElementsByAttribute("data-original").first();
+                    return imgDiv.attr("data-original");
+                } else throw new NullPointerException();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                // Return an image that says "No image"
+                return "http://best-classic-cars.com/images/no_image_available.png.pagespeed.ce.NRX39FjzIc.png";
             }
         }
     }

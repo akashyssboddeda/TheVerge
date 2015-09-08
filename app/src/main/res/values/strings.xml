@@ -7,4 +7,6 @@
     <string name="refresh">Refresh</string>
     <string name="enter_url">Enter URL</string>
     <string name="enter_a_url">Enter a url</string>
+    <string name="open_drawer_xs">Open drawer</string>
+    <string name="close_drawer_xs">Close drawer</string>
 </resources>

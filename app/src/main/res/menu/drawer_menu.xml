@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="Home" />
+    <item
+        android:id="@+id/longform"
+        android:title="Longform" />
+    <item
+        android:id="@+id/reviews"
+        android:title="Reviews" />
+    <item
+        android:id="@+id/video"
+        android:title="Video" />
+    <item
+        android:id="@+id/tech"
+        android:title="Tech" />
+    <item
+        android:id="@+id/science"
+        android:title="Science" />
+    <item
+        android:id="@+id/entertainment"
+        android:title="Entertainment" />
+    <item
+        android:id="@+id/transportation"
+        android:title="Transportation" />
+    <item
+        android:id="@+id/design"
+        android:title="Design" />
+    <item
+        android:id="@+id/usAndWorld"
+        android:title="US and World" />
+</menu>
