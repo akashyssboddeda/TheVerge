@@ -169,29 +169,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (menuItem.getItemId()) {
             case R.id.home:
                 url = "http://www.theverge.com";
-                refresh(true, false);
-                return true;
+                setTitle(R.string.app_name);
+                break;
             case R.id.longform:
-                return true;
+                url = "http://www.theverge.com/longform";
+                setTitle(R.string.longform);
+                break;
             case R.id.reviews:
-                return true;
+                url = "http://www.theverge.com/reviews";
+                setTitle(R.string.reviews);
+                break;
             case R.id.video:
-                return true;
+                url = "http://www.theverge.com/video";
+                setTitle(R.string.video);
+                break;
             case R.id.tech:
-                return true;
+                url = "http://www.theverge.com/tech";
+                setTitle(R.string.tech);
+                break;
             case R.id.science:
-                return true;
+                url = "http://www.theverge.com/science";
+                setTitle(R.string.science);
+                break;
             case R.id.entertainment:
-                return true;
+                url = "http://www.theverge.com/entertainment";
+                setTitle(R.string.entertainment);
+                break;
             case R.id.transportation:
-                return true;
+                url = "http://www.theverge.com/transportation";
+                setTitle(R.string.transportation);
+                break;
             case R.id.design:
-                return true;
+                url = "http://www.theverge.com/design";
+                setTitle(R.string.design);
+                break;
             case R.id.usAndWorld:
-                return true;
+                url = "http://www.theverge.com/us-world";
+                setTitle(R.string.us_and_world);
+                break;
+            default:
+                return false;
         }
 
-        return false;
+        refresh();
+        drawerLayout.closeDrawer(navigationView);
+        return true;
     }
 
     @Override

@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/home"
-        android:title="Home" />
-    <item
-        android:id="@+id/longform"
-        android:title="Longform" />
-    <item
-        android:id="@+id/reviews"
-        android:title="Reviews" />
-    <item
-        android:id="@+id/video"
-        android:title="Video" />
-    <item
-        android:id="@+id/tech"
-        android:title="Tech" />
-    <item
-        android:id="@+id/science"
-        android:title="Science" />
-    <item
-        android:id="@+id/entertainment"
-        android:title="Entertainment" />
-    <item
-        android:id="@+id/transportation"
-        android:title="Transportation" />
-    <item
-        android:id="@+id/design"
-        android:title="Design" />
-    <item
-        android:id="@+id/usAndWorld"
-        android:title="US and World" />
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:title="@string/home" />
+        <item
+            android:id="@+id/longform"
+            android:title="@string/longform" />
+        <item
+            android:id="@+id/reviews"
+            android:title="@string/reviews" />
+        <item
+            android:id="@+id/video"
+            android:title="@string/video" />
+        <item
+            android:id="@+id/tech"
+            android:title="@string/tech" />
+        <item
+            android:id="@+id/science"
+            android:title="@string/science" />
+        <item
+            android:id="@+id/entertainment"
+            android:title="@string/entertainment" />
+        <item
+            android:id="@+id/transportation"
+            android:title="@string/transportation" />
+        <item
+            android:id="@+id/design"
+            android:title="@string/design" />
+        <item
+            android:id="@+id/usAndWorld"
+            android:title="@string/us_and_world" />
+    </group>
 </menu>

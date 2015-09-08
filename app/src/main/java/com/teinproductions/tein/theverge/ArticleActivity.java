@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ArticleActivity extends AppCompatActivity {
+    // TODO: 8-9-2015 This-is-my-next-articles: http://www.theverge.com/2014/11/26/7290751/best-action-camera-you-can-buy
 
     public static final String ARTICLE_URL = "ARTICLE_URL";
 

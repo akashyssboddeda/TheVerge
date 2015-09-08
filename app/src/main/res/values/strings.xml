@@ -9,4 +9,14 @@
     <string name="enter_a_url">Enter a url</string>
     <string name="open_drawer_xs">Open drawer</string>
     <string name="close_drawer_xs">Close drawer</string>
+    <string name="home">Home</string>
+    <string name="longform">Longform</string>
+    <string name="reviews">Reviews</string>
+    <string name="video">Video</string>
+    <string name="tech">Tech</string>
+    <string name="science">Science</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="transportation">Transportation</string>
+    <string name="design">Design</string>
+    <string name="us_and_world">US and World</string>
 </resources>

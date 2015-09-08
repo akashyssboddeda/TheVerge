@@ -115,7 +115,9 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     // TODO: 9-7-2015 Check if href is not a re/code web page
-                    ArticleActivity.openArticle(context, articleLink);
+                    if (articleLink != null) {
+                        ArticleActivity.openArticle(context, articleLink);
+                    }
                 }
             });
         }
@@ -161,7 +163,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
                 } else throw new NullPointerException();
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                return "";
+                return null;
             }
         }
 
