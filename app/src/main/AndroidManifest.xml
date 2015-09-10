@@ -23,6 +23,8 @@
         <activity
             android:name=".ArticleActivity"
             android:label="Article Viewer" />
+        <activity
+            android:name=".SearchResultActivity"
+            android:label="@string/search" />
     </application>
-
 </manifest>

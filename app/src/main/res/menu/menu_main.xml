@@ -12,4 +12,9 @@
         android:orderInCategory="101"
         android:title="@string/enter_url"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_search"
+        android:orderInCategory="102"
+        android:title="@string/search"
+        app:showAsAction="never" />
 </menu>

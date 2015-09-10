@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:text="Elon Musk calls 787 Dreamliner battery structure 'inherently unsafe'" />
+
+        <TextView
+            android:id="@+id/byline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            tools:text="By Sam Byford on January 29, 2013 08:25 pm" />
+
+        <TextView
+            android:id="@+id/blurb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="...across the globe. Yet while Japanese investigators said this week that they are yet to find any factory-level problems with the batteries, SpaceX and Tesla Motors head Elon Musk — who competes with Boeing in commercial space ventures — believes that there is a more fundamental issue in play." />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height=".5dp"
+        android:layout_gravity="bottom"
+        android:background="@android:color/darker_gray" />
+</FrameLayout>

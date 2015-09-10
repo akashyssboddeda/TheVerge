@@ -19,4 +19,6 @@
     <string name="transportation">Transportation</string>
     <string name="design">Design</string>
     <string name="us_and_world">US &amp; World</string>
+    <string name="search">Search</string>
+    <string name="no_connection_established">No connection established</string>
 </resources>

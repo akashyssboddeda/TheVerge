@@ -2,6 +2,7 @@ package com.teinproductions.tein.theverge;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -142,6 +143,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             case R.id.enterURL:
                 return true;
+            case R.id.menu_search:
+                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.search), new EditTextDialog.OnSearchClickListener() {
+                    @Override
+                    public void onClickSearch(String query) {
+                        Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
+                        searchIntent.putExtra(SearchResultActivity.QUERY, query);
+                        startActivity(searchIntent);
+                    }
+                });
         }
         return false;
     }

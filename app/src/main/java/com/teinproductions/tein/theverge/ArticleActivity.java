@@ -48,7 +48,6 @@ public class ArticleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         articleURL = getIntent().getStringExtra(ARTICLE_URL);
-        //articleURL = "http://www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream";
 
         ll = (LinearLayout) findViewById(R.id.linearLayout);
         titleTV = (TextView) findViewById(R.id.title);
@@ -59,9 +58,9 @@ public class ArticleActivity extends AppCompatActivity {
         refresh();
     }
 
-    public static void openArticle(Context context, String link) {
+    public static void openArticle(Context context, String url) {
         Intent intent = new Intent(context, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.ARTICLE_URL, link);
+        intent.putExtra(ArticleActivity.ARTICLE_URL, url);
         context.startActivity(intent);
     }
 
@@ -297,6 +296,7 @@ public class ArticleActivity extends AppCompatActivity {
 
             private void loadMainArticleImage(Element article) {
                 imgSrc = article.getElementsByClass("p-dynamic-image").first().attr("data-original");
+                // TODO: 10-9-2015 Better method for extracting main article image
             }
 
             @Override
