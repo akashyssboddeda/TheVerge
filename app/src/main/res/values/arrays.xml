@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="home_titles">
+        <item>Home</item>
+    </string-array>
+    <string-array name="home_urls">
+        <item>http://www.theverge.com</item>
+    </string-array>
+
+    <string-array name="longform_titles">
+        <item>All</item>
+        <item>All Verge Features</item>
+    </string-array>
+    <string-array name="longform_urls">
+        <item>http://www.theverge.com/longform</item>
+        <item>http://www.theverge.com/label/feature</item>
+    </string-array>
+
+    <string-array name="reviews_titles">
+        <item>All</item>
+        <item>Products</item>
+    </string-array>
+    <string-array name="reviews_urls">
+        <item>http://www.theverge.com/reviews</item>
+        <item>http://www.theverge.com/products</item>
+    </string-array>
+
+    <string-array name="video_titles">
+        <item>All</item>
+    </string-array>
+    <string-array name="video_urls">
+        <item>http://www.theverge.com/video</item>
+    </string-array>
+
+    <string-array name="tech_titles">
+        <item>All</item>
+        <item>Apple</item>
+        <item>Google</item>
+        <item>Microsoft</item>
+        <item>Mobile</item>
+        <item>Photography</item>
+        <item>Home</item>
+        <item>Apps</item>
+    </string-array>
+    <string-array name="tech_urls">
+        <item>http://www.theverge.com/tech</item>
+        <item>http://www.theverge.com/apple</item>
+        <item>http://www.theverge.com/google</item>
+        <item>http://www.theverge.com/microsoft</item>
+        <item>http://www.theverge.com/mobile</item>
+        <item>http://www.theverge.com/photography</item>
+        <item>http://www.theverge.com/hd</item>
+        <item>http://www.theverge.com/apps</item>
+    </string-array>
+
+    <string-array name="science_titles">
+        <item>All</item>
+    </string-array>
+    <string-array name="science_urls">
+        <item>http://www.theverge.com/science</item>
+    </string-array>
+
+    <string-array name="entertainment_titles">
+        <item>All</item>
+        <item>Film</item>
+        <item>Movie reviews</item>
+        <item>TV</item>
+        <item>Music</item>
+        <item>Gaming</item>
+    </string-array>
+    <string-array name="entertainment_urls">
+        <item>http://www.theverge.com/entertainment</item>
+        <item>http://www.theverge.com/label/film</item>
+        <item>http://www.theverge.com/label/move-reviews</item>
+        <item>http://www.theverge.com/label/tv</item>
+        <item>http://www.theverge.com/label/music</item>
+        <item>http://www.theverge.com/gaming</item>
+    </string-array>
+
+    <string-array name="transportation_titles">
+        <item>All</item>
+    </string-array>
+    <string-array name="transportation_urls">
+        <item>http://www.theverge.com/transportation</item>
+    </string-array>
+
+    <string-array name="design_titles">
+        <item>All</item>
+        <item>Architecture</item>
+        <item>Typography</item>
+        <item>Concepts</item>
+    </string-array>
+    <string-array name="design_urls">
+        <item>http://www.theverge.com/design</item>
+        <item>http://www.theverge.com/label/architecture</item>
+        <item>http://www.theverge.com/label/typography</item>
+        <item>http://www.theverge.com/tag/concepts</item>
+    </string-array>
+
+    <string-array name="us_and_world_titles">
+        <item>All</item>
+        <item>Politics</item>
+        <item>National security</item>
+    </string-array>
+    <string-array name="us_and_world_urls">
+        <item>http://www.theverge.com/us-world</item>
+        <item>http://www.theverge.com/tag/politics</item>
+        <item>http://www.theverge.com/tag/national-security</item>
+    </string-array>
+</resources>
