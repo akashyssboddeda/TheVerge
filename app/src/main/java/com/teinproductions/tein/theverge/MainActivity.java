@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -142,16 +143,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //refresh(false, false);
                 return true;
             case R.id.enterURL:
+                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.enter_a_url),
+                        new EditTextDialog.OnSearchClickListener() {
+                            @Override
+                            public void onClickSearch(String query) {
+                                ArticleActivity.openArticle(MainActivity.this, query);
+                            }
+                        });
                 return true;
             case R.id.menu_search:
-                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.search), new EditTextDialog.OnSearchClickListener() {
-                    @Override
-                    public void onClickSearch(String query) {
-                        Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
-                        searchIntent.putExtra(SearchResultActivity.QUERY, query);
-                        startActivity(searchIntent);
-                    }
-                });
+                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.search),
+                        new EditTextDialog.OnSearchClickListener() {
+                            @Override
+                            public void onClickSearch(String query) {
+                                Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
+                                searchIntent.putExtra(SearchResultActivity.QUERY, query);
+                                startActivity(searchIntent);
+                            }
+                        });
+                return true;
         }
         return false;
     }

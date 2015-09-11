@@ -22,7 +22,18 @@
 
         <activity
             android:name=".ArticleActivity"
-            android:label="Article Viewer" />
+            android:label="Article Viewer">
+            <intent-filter>
+                <data
+                    android:host="www.theverge.com"
+                    android:scheme="http" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SearchResultActivity"
             android:label="@string/search" />

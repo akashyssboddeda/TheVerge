@@ -3,6 +3,7 @@ package com.teinproductions.tein.theverge;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +48,7 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        articleURL = getIntent().getStringExtra(ARTICLE_URL);
+        initArticleURL();
 
         ll = (LinearLayout) findViewById(R.id.linearLayout);
         titleTV = (TextView) findViewById(R.id.title);
@@ -56,6 +57,16 @@ public class ArticleActivity extends AppCompatActivity {
         mainImg = (ImageView) findViewById(R.id.articleMainImage);
 
         refresh();
+    }
+
+    private void initArticleURL() {
+        articleURL = getIntent().getStringExtra(ARTICLE_URL);
+        if (articleURL != null) return;
+
+        Uri data = getIntent().getData();
+        if (data != null && "www.theverge.com".equals(data.getHost())) {
+            articleURL = data.toString();
+        }
     }
 
     public static void openArticle(Context context, String url) {
