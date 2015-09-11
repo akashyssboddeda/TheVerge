@@ -1,4 +1,4 @@
-package com.teinproductions.tein.theverge;
+package com.teinproductions.tein.theverge.viewholders;
 
 
 import android.support.v7.widget.CardView;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.teinproductions.tein.theverge.ArticleActivity;
+import com.teinproductions.tein.theverge.R;
+import com.teinproductions.tein.theverge.viewholders.ArticleItemViewHolder;
 
 import org.jsoup.nodes.Element;
 

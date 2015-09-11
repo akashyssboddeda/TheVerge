@@ -1,8 +1,12 @@
-package com.teinproductions.tein.theverge;
+package com.teinproductions.tein.theverge.viewholders;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.teinproductions.tein.theverge.ArticleActivity;
+import com.teinproductions.tein.theverge.R;
+import com.teinproductions.tein.theverge.viewholders.ArticleItemViewHolder;
 
 import org.jsoup.nodes.Element;
 

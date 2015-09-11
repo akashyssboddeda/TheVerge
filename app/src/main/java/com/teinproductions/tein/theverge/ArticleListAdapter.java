@@ -5,6 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.teinproductions.tein.theverge.viewholders.ArticleItemViewHolder;
+import com.teinproductions.tein.theverge.viewholders.HeroViewHolder;
+import com.teinproductions.tein.theverge.viewholders.ReviewViewHolder;
+import com.teinproductions.tein.theverge.viewholders.SearchViewHolder;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 

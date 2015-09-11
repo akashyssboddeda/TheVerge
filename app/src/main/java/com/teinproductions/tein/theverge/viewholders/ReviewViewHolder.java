@@ -1,4 +1,4 @@
-package com.teinproductions.tein.theverge;
+package com.teinproductions.tein.theverge.viewholders;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

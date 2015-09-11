@@ -1,4 +1,4 @@
-package com.teinproductions.tein.theverge;
+package com.teinproductions.tein.theverge.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import org.jsoup.nodes.Element;
 
 
-abstract class ArticleItemViewHolder extends RecyclerView.ViewHolder {
+public abstract class ArticleItemViewHolder extends RecyclerView.ViewHolder {
     public ArticleItemViewHolder(View itemView) {
         super(itemView);
     }
