@@ -31,7 +31,7 @@ public class BasicArticleListAdapter extends RecyclerView.Adapter<BasicArticleLi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_basic, parent, false));
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_search, parent, false));
     }
 
     @Override

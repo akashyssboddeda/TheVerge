@@ -47,12 +47,6 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
                 iterator.remove();
             }
         }
-        /*for (int i = 0; i < data.size(); i++) {
-            Set classNames = data.get(i).classNames();
-            if (classNames.contains("-entry-rock") || classNames.contains("-ad")) {
-                data.remove(i);
-            }
-        }*/
     }
 
     @Override
