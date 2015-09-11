@@ -19,10 +19,13 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Iterator;
+import java.util.Set;
 
 public class ArticleListFragment extends Fragment {
     private static final String URL = "URL";
@@ -75,6 +78,7 @@ public class ArticleListFragment extends Fragment {
                     Document doc = Jsoup.connect(url).get();
                     Elements elements = doc.getElementsByClass("m-hero__slot");
                     elements.addAll(doc.getElementsByClass("m-entry-slot"));
+                    filterItems(elements);
                     toCache = elements.outerHtml();
 
                     return elements;
@@ -92,6 +96,21 @@ public class ArticleListFragment extends Fragment {
                     if (cache == null) return null;
                     Document doc = Jsoup.parse(cache);
                     return doc.getElementsByClass("m-hero__slot-link");
+                }
+            }
+
+            /**
+             * Makes sure all the items in {@code data} are real links
+             * to articles and not ads or other things not (yet) supported
+             */
+            private void filterItems(Elements items) {
+                // TODO some articles still leak through this filter and are shown as "Unknown title" card
+                for (Iterator<Element> iterator = items.iterator(); iterator.hasNext();) {
+                    Element element = iterator.next();
+                    Set classNames = element.classNames();
+                    if (classNames.contains("-entry-rock") || classNames.contains("-ad")) {
+                        iterator.remove();
+                    }
                 }
             }
 
