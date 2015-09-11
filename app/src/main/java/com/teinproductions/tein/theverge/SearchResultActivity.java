@@ -21,7 +21,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private static final String DATA = "data";
 
     private RecyclerView recyclerView;
-    private BasicArticleListAdapter adapter;
+    private ArticleListAdapter adapter;
     private TextView errorTextView;
 
     private String query;
@@ -32,6 +32,7 @@ public class SearchResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         query = getIntent().getExtras().getString(QUERY);
@@ -40,7 +41,7 @@ public class SearchResultActivity extends AppCompatActivity {
         errorTextView = (TextView) findViewById(R.id.error_textView);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new BasicArticleListAdapter(this, new Elements());
+        adapter = new ArticleListAdapter(this, new Elements());
         recyclerView.setAdapter(adapter);
 
         loadData(savedInstanceState);

@@ -21,6 +21,20 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
     Context context;
     Elements data;
 
+    public ArticleListAdapter(Context context, Elements data) {
+        this.context = context;
+        this.data = data;
+    }
+
+    public void setData(Elements data) {
+        this.data = data;
+        notifyDataSetChanged();
+    }
+
+    public Elements getData() {
+        return data;
+    }
+
     @Override
     public ArticleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {

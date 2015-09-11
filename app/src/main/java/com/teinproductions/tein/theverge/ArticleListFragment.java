@@ -32,7 +32,7 @@ public class ArticleListFragment extends Fragment {
 
     SwipeRefreshLayout srLayout;
     RecyclerView recyclerView;
-    HeroAdapter adapter;
+    ArticleListAdapter adapter;
     String url;
 
     @Nullable
@@ -43,7 +43,7 @@ public class ArticleListFragment extends Fragment {
         srLayout = new SwipeRefreshLayout(getActivity());
         recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new HeroAdapter(getActivity(), new Elements());
+        adapter = new ArticleListAdapter(getActivity(), new Elements());
         recyclerView.setAdapter(adapter);
         srLayout.addView(recyclerView);
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -124,8 +124,7 @@ public class ArticleListFragment extends Fragment {
                     if (firstTryCache) {
                         // Load the fetched data into the recyclerView
                         if (elements != null) {
-                            ((HeroAdapter) recyclerView.getAdapter()).setData(elements);
-                            recyclerView.getAdapter().notifyDataSetChanged();
+                            adapter.setData(elements);
                         }
 
                         // Now try from the web:
@@ -143,8 +142,7 @@ public class ArticleListFragment extends Fragment {
                 }
 
                 // Load the fetched data into the recyclerView
-                ((HeroAdapter) recyclerView.getAdapter()).setData(elements);
-                recyclerView.getAdapter().notifyDataSetChanged();
+                adapter.setData(elements);
             }
         }.execute();
     }
