@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.teinproductions.tein.theverge.viewholders.ArticleItemViewHolder;
 import com.teinproductions.tein.theverge.viewholders.HeroViewHolder;
+import com.teinproductions.tein.theverge.viewholders.ProductViewHolder;
 import com.teinproductions.tein.theverge.viewholders.ReviewViewHolder;
 import com.teinproductions.tein.theverge.viewholders.SearchViewHolder;
 
@@ -17,6 +18,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
     private static final int HERO_ITEM = 0;
     private static final int REVIEW_ITEM = 1;
     private static final int SEARCH_ITEM = 2;
+    private static final int PRODUCT_ITEM = 3;
 
     Context context;
     Elements data;
@@ -44,6 +46,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
                 return new ReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false));
             case SEARCH_ITEM:
                 return new SearchViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_search, parent, false));
+            case PRODUCT_ITEM:
+                return new ProductViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_product, parent, false));
         }
         return null;
     }
@@ -67,6 +71,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
             return REVIEW_ITEM;
         } else if (element.classNames().contains("p-basic-article-list__node")) {
             return SEARCH_ITEM;
+        } else if (element.classNames().contains("m-products-index__grid-item")) {
+            return PRODUCT_ITEM;
         } else {
             return super.getItemViewType(position);
         }

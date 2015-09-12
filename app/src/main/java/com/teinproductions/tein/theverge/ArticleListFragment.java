@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -79,6 +80,7 @@ public class ArticleListFragment extends Fragment {
                     Elements elements = doc.getElementsByClass("m-hero__slot");
                     elements.addAll(doc.getElementsByClass("m-entry-slot"));
                     elements.addAll(doc.getElementsByClass("m-reviews-index__node"));
+                    elements.addAll(doc.getElementsByClass("m-products-index__grid-item"));
                     filterItems(elements);
                     toCache = elements.outerHtml();
 
