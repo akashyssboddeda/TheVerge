@@ -78,6 +78,7 @@ public class ArticleListFragment extends Fragment {
                     Document doc = Jsoup.connect(url).get();
                     Elements elements = doc.getElementsByClass("m-hero__slot");
                     elements.addAll(doc.getElementsByClass("m-entry-slot"));
+                    elements.addAll(doc.getElementsByClass("m-reviews-index__node"));
                     filterItems(elements);
                     toCache = elements.outerHtml();
 

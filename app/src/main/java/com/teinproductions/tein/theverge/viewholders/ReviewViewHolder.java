@@ -1,11 +1,13 @@
 package com.teinproductions.tein.theverge.viewholders;
 
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.teinproductions.tein.theverge.ArticleActivity;
 import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
@@ -16,6 +18,7 @@ import java.util.Iterator;
 public class ReviewViewHolder extends ArticleItemViewHolder {
     TextView vergeScoreTV, titleTV, blurbTV, priceTV;
     ImageView imageView;
+    String articleURL;
 
     public ReviewViewHolder(View itemView) {
         super(itemView);
@@ -25,6 +28,14 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
         blurbTV = (TextView) itemView.findViewById(R.id.blurb);
         priceTV = (TextView) itemView.findViewById(R.id.price_textView);
         imageView = (ImageView) itemView.findViewById(R.id.imageView);
+
+        itemView.findViewById(R.id.cardView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (articleURL != null && URLUtil.isValidUrl(articleURL))
+                    ArticleActivity.openArticle(ReviewViewHolder.this.itemView.getContext(), articleURL);
+            }
+        });
     }
 
     @Override
@@ -34,6 +45,7 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
         parsePrice(element);
         parseVergeScore(element);
         parseImage(element);
+        parseArticleURL(element);
     }
 
     private void parseTitle(Element element) {
@@ -49,6 +61,7 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
         else {
             titleTV.setVisibility(View.VISIBLE);
             titleTV.setText(title);
+            imageView.setContentDescription(title);
         }
     }
 
@@ -101,8 +114,7 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
         try {
             Element imageDiv = element.getElementsByClass("image").first();
             Element scoreDiv = imageDiv.getElementsByAttributeValue("itemprop", "reviewRating").first();
-            Element scoreSpan = scoreDiv.getElementsByAttributeValue("itemprop", "reviewRating").first();
-            vergeScore = scoreSpan.text();
+            vergeScore = scoreDiv.getElementsByTag("strong").first().text();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,5 +154,16 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
         // Set 16:9 ratio on imageView, according to the Material Design specs
         imageView.getLayoutParams().height = imageView.getWidth() / 16 * 9;
         imageView.requestLayout();
+    }
+
+    private void parseArticleURL(Element element) {
+        try {
+            Element contentDiv = element.getElementsByClass("content").first();
+            Element reviewDiv = contentDiv.getElementsByClass("review").first();
+            Element h3 = reviewDiv.getElementsByTag("h3").first();
+            articleURL = h3.getElementsByTag("a").first().attr("href");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
