@@ -5,15 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -22,18 +20,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
     public static final String CACHE_FILE_NAME = "big7cache";
+
+    /* - HeroTabFragment with tabs, hosts:
+     * - ArticleListAdapter with several ViewHolders
+     * - LongformFragment hosts ArticleListAdapter
+     * - DownloadAsyncTask
+     * - MainActivity keeps instances of all fragments
+     * - ReviewFragment with ArticleListAdapter and additional controls
+     * - ProductsFragment with ArticleListAdapter and additional controls
+     */
 
     ActionBarDrawerToggle drawerToggle;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    ArticleListPagerAdapter pagerAdapter;
-
-    ArticleListPagerAdapter.Category category = ArticleListPagerAdapter.Category.HOME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +46,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
 
-        refreshContent();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.home);
-        tabLayout.setupWithViewPager(viewPager);
+
+        swapFragment(HeroTabFragment.newInstance(
+                getResources().getStringArray(R.array.home_urls), getResources().getStringArray(R.array.home_titles)));
 
         setDrawerToggle();
-    }
-
-    private void refreshContent() {
-        pagerAdapter = new ArticleListPagerAdapter(this, getSupportFragmentManager(), category);
-        viewPager.setAdapter(pagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
-
-        if (pagerAdapter.getCount() == 1) tabLayout.setVisibility(View.GONE);
-        else tabLayout.setVisibility(View.VISIBLE);
     }
 
     private void setDrawerToggle() {
@@ -79,54 +70,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+        String[] heroUrls, heroTitles;
         switch (menuItem.getItemId()) {
             case R.id.home:
-                category = ArticleListPagerAdapter.Category.HOME;
+                heroUrls = getResources().getStringArray(R.array.home_urls);
+                heroTitles = getResources().getStringArray(R.array.home_titles);
                 toolbar.setTitle(R.string.app_name);
                 break;
             case R.id.longform:
-                category = ArticleListPagerAdapter.Category.LONGFORM;
                 toolbar.setTitle(R.string.longform);
-                break;
+                return false;
             case R.id.reviews:
-                category = ArticleListPagerAdapter.Category.REVIEWS;
+                swapFragment(new ReviewFragment());
                 toolbar.setTitle(R.string.reviews);
-                break;
+                drawerLayout.closeDrawer(navigationView);
+                return true;
             case R.id.video:
-                category = ArticleListPagerAdapter.Category.VIDEO;
                 toolbar.setTitle(R.string.video);
-                break;
+                return false;
             case R.id.tech:
-                category = ArticleListPagerAdapter.Category.TECH;
+                heroUrls = getResources().getStringArray(R.array.tech_urls);
+                heroTitles = getResources().getStringArray(R.array.tech_titles);
                 toolbar.setTitle(R.string.tech);
                 break;
             case R.id.science:
-                category = ArticleListPagerAdapter.Category.SCIENCE;
+                heroUrls = getResources().getStringArray(R.array.science_urls);
+                heroTitles = getResources().getStringArray(R.array.science_titles);
                 toolbar.setTitle(R.string.science);
                 break;
             case R.id.entertainment:
-                category = ArticleListPagerAdapter.Category.ENTERTAINMENT;
+                heroUrls = getResources().getStringArray(R.array.entertainment_urls);
+                heroTitles = getResources().getStringArray(R.array.entertainment_titles);
                 toolbar.setTitle(R.string.entertainment);
                 break;
             case R.id.transportation:
-                category = ArticleListPagerAdapter.Category.TRANSPORTATION;
+                heroUrls = getResources().getStringArray(R.array.transportation_urls);
+                heroTitles = getResources().getStringArray(R.array.transportation_titles);
                 toolbar.setTitle(R.string.transportation);
                 break;
             case R.id.design:
-                category = ArticleListPagerAdapter.Category.DESIGN;
+                heroUrls = getResources().getStringArray(R.array.design_urls);
+                heroTitles = getResources().getStringArray(R.array.design_titles);
                 toolbar.setTitle(R.string.design);
                 break;
             case R.id.usAndWorld:
-                category = ArticleListPagerAdapter.Category.US_AND_WORLD;
+                heroUrls = getResources().getStringArray(R.array.us_and_world_urls);
+                heroTitles = getResources().getStringArray(R.array.us_and_world_titles);
                 toolbar.setTitle(R.string.us_and_world);
                 break;
             default:
                 return false;
         }
 
-        refreshContent();
+        if (heroUrls != null && heroTitles != null) {
+            swapFragment(HeroTabFragment.newInstance(
+                    heroUrls, heroTitles));
+        }
+
         drawerLayout.closeDrawer(navigationView);
         return true;
+    }
+
+    private void swapFragment(Fragment newFragment) {
+        if (newFragment == null) return;
+        if (newFragment.equals(getSupportFragmentManager().findFragmentById(R.id.container)))
+            return;
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, newFragment)
+                .commit();
     }
 
     @Override

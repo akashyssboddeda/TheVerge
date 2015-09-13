@@ -1,98 +1,97 @@
-/*
 package com.teinproductions.tein.theverge;
-
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
+import org.jsoup.UnsupportedMimeTypeException;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.SocketTimeoutException;
+import java.util.Iterator;
+import java.util.Set;
 
-public class DownloadAsyncTask extends AsyncTask<String, Void, String> {
+public class DownloadAsyncTask extends AsyncTask<Void, Void, Elements> {
 
+    private String url;
     private Context context;
-    private OnLoadedListener listener;
+    private String[] classes;
+    private OnLoadingFinishedListener loadListener;
 
-    interface OnLoadedListener {
-        void onLoaded(String s, boolean fromCache);
-    }
-
-    public DownloadAsyncTask(Context context) {
+    public DownloadAsyncTask(Context context, OnLoadingFinishedListener loadListener, String url, String... classes) {
+        this.url = url;
         this.context = context;
+        this.classes = classes;
+        this.loadListener = loadListener;
     }
 
-    public DownloadAsyncTask(Context context, OnLoadedListener listener) {
-        this.context = context;
-        this.listener = listener;
-    }
+    private String errorMessage;
 
     @Override
-    public String doInBackground(String... params) {
+    protected Elements doInBackground(Void... params) {
         try {
-            //TODO use Jsoup.connect(params[0]).get();
-            return fetchWebPage(context, params[0]);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            if (checkNotConnected())
+                throw new NullPointerException();
+
+            Document doc = Jsoup.connect(url).get();
+            Elements elements = new Elements();
+            for (String divClass : classes) {
+                elements.addAll(doc.getElementsByClass(divClass));
+            }
+            /*Elements elements = doc.getElementsByClass("m-hero__slot");
+            elements.addAll(doc.getElementsByClass("m-entry-slot"));
+            elements.addAll(doc.getElementsByClass("m-reviews-index__node"));
+            elements.addAll(doc.getElementsByClass("m-products-index__grid-item"));*/
+            filterItems(elements);
+
+            return elements;
+        } catch (IOException | NullPointerException e) {
+            if (e instanceof HttpStatusException || e instanceof UnsupportedMimeTypeException)
+                errorMessage = "No connection to the server";
+            else if (e instanceof SocketTimeoutException)
+                errorMessage = "Connection timed out";
+            else if (e instanceof IOException) errorMessage = "No connection to the server";
+            else errorMessage = "Please check your connection";
+
+            return new Elements();
         }
     }
 
-    public static boolean checkNotConnected(Context context) {
+    private boolean checkNotConnected() {
         ConnectivityManager connManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         return networkInfo == null || !networkInfo.isConnected();
     }
 
-    public static String read(InputStream inputStream) throws IOException {
-        InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            sb.append(line).append("\n");
+    /**
+     * Makes sure all the items in {@code data} are real links
+     * to articles and not for example ads
+     */
+    private void filterItems(Elements items) {
+        // TODO some articles still leak through this filter and are shown as "Unknown title" card
+        for (Iterator<Element> iterator = items.iterator(); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            Set classNames = element.classNames();
+            if (classNames.contains("-entry-rock") || classNames.contains("-ad")) {
+                iterator.remove();
+            }
         }
-
-        return sb.toString();
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        listener.onLoaded(s, false);
-    }
-
-    public void setListener(OnLoadedListener listener) {
-        this.listener = listener;
+    protected void onPostExecute(Elements elements) {
+        if (loadListener != null) loadListener.onLoaded(elements, errorMessage);
     }
 
 
-    public static String fetchWebPage(Context context, String URL) throws IOException {
-        if (checkNotConnected(context)) return null;
-
-        URL url = new URL(URL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(20000);
-        conn.setConnectTimeout(30000);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.connect();
-        int response = conn.getResponseCode();
-        //Log.d("THEVERGE", "Response: " + response);
-
-        if (response >= 400) return "" + response;
-
-        InputStream is = conn.getInputStream();
-        return read(is);
+    public interface OnLoadingFinishedListener {
+        void onLoaded(Elements result, String errorMessage);
     }
 }
-*/

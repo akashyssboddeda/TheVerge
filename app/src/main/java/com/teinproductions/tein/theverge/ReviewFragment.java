@@ -1,8 +1,5 @@
 package com.teinproductions.tein.theverge;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -16,25 +13,23 @@ import android.view.ViewGroup;
 
 import org.jsoup.select.Elements;
 
-public class ArticleListFragment extends Fragment {
-    private static final String URL = "URL";
+public class ReviewFragment extends Fragment {
 
     SwipeRefreshLayout srLayout;
     RecyclerView recyclerView;
     ArticleListAdapter adapter;
-    String url;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.url = getArguments().getString(URL);
+        View rootView = inflater.inflate(R.layout.fragment_reviews, container, false);
 
-        srLayout = new SwipeRefreshLayout(getActivity());
-        recyclerView = new RecyclerView(getActivity());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new ArticleListAdapter(getActivity(), new Elements());
+        srLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new ArticleListAdapter(getContext(), new Elements());
         recyclerView.setAdapter(adapter);
-        srLayout.addView(recyclerView);
+
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -43,7 +38,7 @@ public class ArticleListFragment extends Fragment {
         });
 
         refresh();
-        return srLayout;
+        return rootView;
     }
 
     private void refresh() {
@@ -62,22 +57,6 @@ public class ArticleListFragment extends Fragment {
                     Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
                 }
             }
-        }, url, "m-hero__slot", "m-entry-slot").execute();
-    }
-
-    public static boolean checkNotConnected(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        return networkInfo == null || !networkInfo.isConnected();
-    }
-
-
-    public static ArticleListFragment newInstance(String url) {
-        ArticleListFragment fragment = new ArticleListFragment();
-        Bundle args = new Bundle();
-        args.putString(URL, url);
-        fragment.setArguments(args);
-        return fragment;
+        }, "http://www.theverge.com/reviews", "m-reviews-index__node").execute();
     }
 }
