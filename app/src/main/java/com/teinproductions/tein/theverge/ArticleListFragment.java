@@ -55,9 +55,19 @@ public class ArticleListFragment extends Fragment {
         });
         new DownloadAsyncTask(getContext(), new DownloadAsyncTask.OnLoadingFinishedListener() {
             @Override
-            public void onLoaded(Elements result, String errorMessage) {
+            public void onCacheLoaded(Elements cache) {
+                adapter.setData(cache);
+            }
+
+            @Override
+            public void onWebLoaded(Elements result) {
                 srLayout.setRefreshing(false);
                 adapter.setData(result);
+            }
+
+            @Override
+            public void onWebLoadFailed(String errorMessage) {
+                srLayout.setRefreshing(false);
                 if (errorMessage != null) {
                     Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
                 }

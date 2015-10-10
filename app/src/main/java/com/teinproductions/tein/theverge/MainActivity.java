@@ -1,7 +1,6 @@
 package com.teinproductions.tein.theverge;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -12,12 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String CACHE_FILE_NAME = "big7cache";
@@ -174,36 +167,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         return false;
-    }
-
-    public static String getFile(Context context) {
-        StringBuilder sb;
-
-        try {
-            FileInputStream fis = context.openFileInput(CACHE_FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            BufferedReader buffReader = new BufferedReader(isr);
-
-            sb = new StringBuilder();
-            String line;
-            while ((line = buffReader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void saveFile(Context context, String toSave) {
-        try {
-            FileOutputStream fos = context.openFileOutput(CACHE_FILE_NAME, MODE_PRIVATE);
-            fos.write(toSave.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

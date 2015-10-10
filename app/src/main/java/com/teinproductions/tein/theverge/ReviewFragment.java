@@ -50,9 +50,18 @@ public class ReviewFragment extends Fragment {
         });
         new DownloadAsyncTask(getContext(), new DownloadAsyncTask.OnLoadingFinishedListener() {
             @Override
-            public void onLoaded(Elements result, String errorMessage) {
-                srLayout.setRefreshing(false);
+            public void onCacheLoaded(Elements cache) {
+                adapter.setData(cache);
+            }
+
+            @Override
+            public void onWebLoaded(Elements result) {
                 adapter.setData(result);
+                srLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onWebLoadFailed(String errorMessage) {
                 if (errorMessage != null) {
                     Snackbar.make(recyclerView, errorMessage, Snackbar.LENGTH_LONG).show();
                 }
