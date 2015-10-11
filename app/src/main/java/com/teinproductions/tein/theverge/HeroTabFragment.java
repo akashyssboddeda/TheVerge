@@ -22,7 +22,7 @@ public class HeroTabFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_hero_tab, container, false);
 
         viewPager = (ViewPager) rootView.findViewById(R.id.viewPager);
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabLayout);
+        tabLayout = ((MainActivity) getActivity()).getTabLayout();
 
         String[] urls = getArguments().getStringArray(URLS);
         String[] titles = getArguments().getStringArray(TITLES);

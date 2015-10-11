@@ -4,6 +4,7 @@ package com.teinproductions.tein.theverge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,9 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    public static final String CACHE_FILE_NAME = "big7cache";
-
-    /* - HeroTabFragment with tabs, hosts:
+    /* -- SKETCH --
+     * - HeroTabFragment with tabs, hosts:
      * - ArticleListAdapter with several ViewHolders
      * - LongformFragment hosts ArticleListAdapter
      * - DownloadAsyncTask
@@ -24,10 +24,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * - ProductsFragment with ArticleListAdapter and additional controls
      */
 
-    ActionBarDrawerToggle drawerToggle;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.home);
@@ -131,6 +133,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, newFragment)
                 .commit();
+    }
+
+    public TabLayout getTabLayout() {
+        return tabLayout;
     }
 
     @Override

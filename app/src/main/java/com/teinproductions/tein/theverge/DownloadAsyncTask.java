@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -43,6 +42,7 @@ public class DownloadAsyncTask extends AsyncTask<Void, Elements, Elements> {
     protected Elements doInBackground(Void... params) {
         Uri uri =  Uri.parse(url);
         String urlWithoutScheme = (uri.getHost() + uri.getPath()).replace("/", "");
+        urlWithoutScheme = urlWithoutScheme.replace("/", "");
 
         // First try cache
         try {
@@ -91,13 +91,11 @@ public class DownloadAsyncTask extends AsyncTask<Void, Elements, Elements> {
 
     @Override
     protected void onProgressUpdate(Elements... values) {
-        Toast.makeText(context, "cache loaded", Toast.LENGTH_SHORT).show();
         if (loadListener != null) loadListener.onCacheLoaded(values[0]);
     }
 
     @Override
     protected void onPostExecute(Elements elements) {
-        Toast.makeText(context, "web loaded", Toast.LENGTH_SHORT).show();
         if (loadListener == null) return;
 
         if (elements == null) {
