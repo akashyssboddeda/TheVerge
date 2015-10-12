@@ -22,7 +22,8 @@
 
         <activity
             android:name=".ArticleActivity"
-            android:label="Article Viewer">
+            android:label="Article Viewer"
+            android:theme="@style/ArticleTheme">
             <intent-filter>
                 <data
                     android:host="www.theverge.com"

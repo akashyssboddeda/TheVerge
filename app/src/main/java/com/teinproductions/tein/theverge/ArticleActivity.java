@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +40,7 @@ public class ArticleActivity extends AppCompatActivity {
     LinearLayout ll;
     TextView titleTV, authorTV, subTV;
     ImageView mainImg;
+    CollapsingToolbarLayout collToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class ArticleActivity extends AppCompatActivity {
         authorTV = (TextView) findViewById(R.id.author);
         subTV = (TextView) findViewById(R.id.subtitle);
         mainImg = (ImageView) findViewById(R.id.articleMainImage);
+        collToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
 
         refresh();
     }
@@ -313,16 +315,19 @@ public class ArticleActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void v) {
                 if (title == null) titleTV.setVisibility(View.GONE);
-                else titleTV.setText(title);
+                else {
+                    titleTV.setText(title);
+                    collToolbar.setTitle(title);
+                }
                 if (sub == null) subTV.setVisibility(View.GONE);
                 else subTV.setText(sub);
                 authorAndDate();
 
                 if (imgSrc != null) {
                     Picasso.with(ArticleActivity.this).load(imgSrc).into(mainImg);
-                    // Set 16:9 ratio on imageView
-                    mainImg.getLayoutParams().height = mainImg.getWidth() / 16 * 9;
-                    mainImg.requestLayout();
+                    /*// Set 16:9 ratio on imageView
+                    mainImg.getLayoutParams().height = mainImg.getWidth() / 16 * 9;*/
+                    //mainImg.requestLayout();
                 }
 
                 LinearLayout.LayoutParams textViewParams = new LinearLayout.LayoutParams(
@@ -343,7 +348,7 @@ public class ArticleActivity extends AppCompatActivity {
                         switch (((Text) piece).type) {
                             case Text.PARAGRAPH:
                                 tv.setTextColor(getResources().getColor(android.R.color.black));
-                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                                 break;
                             case Text.H2HEADER:
                                 tv.setTextColor(getResources().getColor(android.R.color.black));
