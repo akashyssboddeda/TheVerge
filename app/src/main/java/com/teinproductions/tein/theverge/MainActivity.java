@@ -1,17 +1,26 @@
 package com.teinproductions.tein.theverge;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /* -- SKETCH --
@@ -152,26 +161,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //refresh(false, false);
                 return true;
             case R.id.enterURL:
-                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.enter_a_url),
-                        new EditTextDialog.OnSearchClickListener() {
-                            @Override
-                            public void onClickSearch(String query) {
-                                ArticleActivity.openArticle(MainActivity.this, query);
-                            }
-                        });
+                showETDialog(R.string.enter_a_url, R.string.go, new OnETDialogActionClickListener() {
+                    @Override
+                    public void onClick(String input) {
+                        ArticleActivity.openArticle(MainActivity.this, input);
+                    }
+                });
                 return true;
             case R.id.menu_search:
-                EditTextDialog.show(getSupportFragmentManager(), getString(R.string.search),
-                        new EditTextDialog.OnSearchClickListener() {
-                            @Override
-                            public void onClickSearch(String query) {
-                                Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
-                                searchIntent.putExtra(SearchResultActivity.QUERY, query);
-                                startActivity(searchIntent);
-                            }
-                        });
+                showETDialog(R.string.search, R.string.search, new OnETDialogActionClickListener() {
+                    @Override
+                    public void onClick(String input) {
+                        Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
+                        searchIntent.putExtra(SearchResultActivity.QUERY, input);
+                        startActivity(searchIntent);
+                    }
+                });
                 return true;
         }
         return false;
+    }
+
+    private void showETDialog(@StringRes int title, @StringRes int positiveButton, final OnETDialogActionClickListener listener) {
+        final EditText query = new EditText(this);
+
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(query)
+                .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(query.getText().toString());
+                    }
+                })
+                .setNeutralButton(R.string.cancel, null)
+                .create();
+
+        query.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(query.length() != 0);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { /*ignored*/ }
+
+            public void afterTextChanged(Editable s) { /*ignored*/ }
+        });
+        dialog.show();
+    }
+
+    private interface OnETDialogActionClickListener {
+        void onClick(String input);
     }
 }

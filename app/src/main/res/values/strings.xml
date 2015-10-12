@@ -21,4 +21,6 @@
     <string name="us_and_world">US &amp; World</string>
     <string name="search">Search</string>
     <string name="no_connection_established">No connection established</string>
+    <string name="cancel">Cancel</string>
+    <string name="go">Go</string>
 </resources>
