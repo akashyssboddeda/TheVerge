@@ -35,8 +35,13 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SearchResultActivity"
             android:label="@string/search" />
+
+        <activity
+            android:name=".TagActivity"
+            android:label="@string/tag" />
     </application>
 </manifest>

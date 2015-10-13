@@ -31,5 +31,8 @@
         <item
             android:id="@+id/usAndWorld"
             android:title="@string/us_and_world" />
+        <item
+            android:id="@+id/tag"
+            android:title="@string/tag_ellipses" />
     </group>
 </menu>

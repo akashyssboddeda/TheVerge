@@ -36,7 +36,7 @@ public class SearchResultActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         query = getIntent().getExtras().getString(QUERY);
-        getSupportActionBar().setTitle(firstCharUpperCase(query));
+        getSupportActionBar().setTitle(getString(R.string.search_result_activity_title, query));
 
         errorTextView = (TextView) findViewById(R.id.error_textView);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -103,11 +103,5 @@ public class SearchResultActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
-
-    private static String firstCharUpperCase(String str) {
-        char[] chars = str.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        return String.valueOf(chars);
     }
 }

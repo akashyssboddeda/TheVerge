@@ -1,6 +1,7 @@
 package com.teinproductions.tein.theverge;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /* -- SKETCH --
@@ -39,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private TabLayout tabLayout;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        String[] heroUrls, heroTitles;
+        String[] heroUrls = null, heroTitles = null;
         switch (menuItem.getItemId()) {
             case R.id.home:
                 heroUrls = getResources().getStringArray(R.array.home_urls);
@@ -122,6 +121,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 heroTitles = getResources().getStringArray(R.array.us_and_world_titles);
                 toolbar.setTitle(R.string.us_and_world);
                 break;
+            case R.id.tag:
+                showETDialog(MainActivity.this, R.string.enter_tag_name, R.string.go, new OnETDialogActionClickListener() {
+                    @Override
+                    public void onClick(String input) {
+                        Intent tagIntent = new Intent(MainActivity.this, TagActivity.class);
+                        tagIntent.putExtra(TagActivity.TAG_NAME, input);
+                        startActivity(tagIntent);
+                    }
+                });
+                break;
             default:
                 return false;
         }
@@ -161,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //refresh(false, false);
                 return true;
             case R.id.enterURL:
-                showETDialog(R.string.enter_a_url, R.string.go, new OnETDialogActionClickListener() {
+                showETDialog(MainActivity.this, R.string.enter_a_url, R.string.go, new OnETDialogActionClickListener() {
                     @Override
                     public void onClick(String input) {
                         ArticleActivity.openArticle(MainActivity.this, input);
@@ -169,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
                 return true;
             case R.id.menu_search:
-                showETDialog(R.string.search, R.string.search, new OnETDialogActionClickListener() {
+                showETDialog(MainActivity.this, R.string.search, R.string.search, new OnETDialogActionClickListener() {
                     @Override
                     public void onClick(String input) {
                         Intent searchIntent = new Intent(MainActivity.this, SearchResultActivity.class);
@@ -182,10 +191,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-    private void showETDialog(@StringRes int title, @StringRes int positiveButton, final OnETDialogActionClickListener listener) {
-        final EditText query = new EditText(this);
+    public static void showETDialog(Context context, @StringRes int title, @StringRes int positiveButton, final OnETDialogActionClickListener listener) {
+        final EditText query = new EditText(context);
 
-        final AlertDialog dialog = new AlertDialog.Builder(this)
+        final AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setView(query)
                 .setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
@@ -210,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
     }
 
-    private interface OnETDialogActionClickListener {
+    public interface OnETDialogActionClickListener {
         void onClick(String input);
     }
 }

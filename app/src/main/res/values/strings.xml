@@ -23,4 +23,11 @@
     <string name="no_connection_established">No connection established</string>
     <string name="cancel">Cancel</string>
     <string name="go">Go</string>
+    <string name="tag_ellipses">Tag…</string>
+    <string name="enter_tag_name">Enter tag name</string>
+    <string name="tag_name_error">There is no tag named \"%s\".</string>
+    <string name="tag">Tag</string>
+    <string name="tag_activity_title">Tag: %s</string>
+    <string name="search_result_activity_title">Search: %s</string>
+    <string name="try_again">Try again</string>
 </resources>
