@@ -52,11 +52,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.home);
-
-        swapFragment(HeroTabFragment.newInstance(
-                getResources().getStringArray(R.array.home_urls), getResources().getStringArray(R.array.home_titles)));
-
         setDrawerToggle();
+
+        if (savedInstanceState == null)
+            swapFragment(HeroTabFragment.newInstance(
+                    getResources().getStringArray(R.array.home_urls), getResources().getStringArray(R.array.home_titles)));
     }
 
     private void setDrawerToggle() {

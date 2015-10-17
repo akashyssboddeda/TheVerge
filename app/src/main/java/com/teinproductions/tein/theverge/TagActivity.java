@@ -50,6 +50,7 @@ public class TagActivity extends AppCompatActivity {
                 refresh();
             }
         });
+        refresh();
     }
 
     private void refresh() {

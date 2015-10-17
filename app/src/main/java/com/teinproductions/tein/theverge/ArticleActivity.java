@@ -2,15 +2,19 @@ package com.teinproductions.tein.theverge;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.TypedValue;
@@ -29,6 +33,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArticleActivity extends AppCompatActivity {
     // TODO: 8-9-2015 This-is-my-next-articles: http://www.theverge.com/2014/11/26/7290751/best-action-camera-you-can-buy
@@ -37,10 +42,10 @@ public class ArticleActivity extends AppCompatActivity {
 
     private String articleURL;
 
-    LinearLayout ll;
-    TextView titleTV, authorTV, subTV;
-    ImageView mainImg;
-    CollapsingToolbarLayout collToolbar;
+    private LinearLayout ll;
+    private TextView titleTV, authorTV, subTV;
+    private ImageView mainImg;
+    private CollapsingToolbarLayout collToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,34 +114,23 @@ public class ArticleActivity extends AppCompatActivity {
 
     private void refresh() {
         new AsyncTask<Void, Void, Void>() {
-            String title, author, date, sub, imgSrc;
-            ArrayList<ArticlePiece> articlePieces = new ArrayList<>();
+            private Document doc;
+            private String title, date, sub, imgSrc;
+            private String authorName, authorTheVergeLink;
+            private List<ArticlePiece> articlePieces = new ArrayList<>();
 
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    Document document = Jsoup.connect(articleURL).get();
+                    doc = Jsoup.connect(articleURL).get();
 
-                    try {
-                        // Parse the title TODO: 9-7-2015 Or should I call document.getElementsById("stream-title")?
-                        title = document.getElementsByClass("instapaper_title").first().text();
-                    } catch (NullPointerException ignored) {/*ignored*/}
-                    try {
-                        author = document.getElementsByClass("author").first().text();
-                    } catch (NullPointerException ignored) {/*ignored*/}
-                    try {
-                        date = document.getElementsByClass("published").first().text();
-                    } catch (NullPointerException ignored) {/*ignored*/}
-                    try {
-                        sub = document.getElementsByAttributeValueContaining(
-                                "data-remote-headline-edit", "summary").first().text();
-                    } catch (NullPointerException ignored) {/*ignored*/}
+                    parseHeader();
 
-                    // Whitespace below title and author
+                    // Add whitespace below title and author
                     articlePieces.add(new Whitespace());
 
                     // Figure out whether it's an article (m-article), review (m-review) or feature (m-feature)
-                    Element article = document.getElementsByTag("article").first();
+                    Element article = doc.getElementsByTag("article").first();
                     if (article.classNames().contains("m-article")) {
                         handleArticle(article);
                     } else if (article.classNames().contains("m-review")) {
@@ -150,6 +144,27 @@ public class ArticleActivity extends AppCompatActivity {
                     e.printStackTrace();
                     return null;
                 }
+            }
+
+            private void parseHeader() {
+                Element header = doc.getElementsByClass("p-entry-header").first();
+                try {
+                    title = header.getElementsByClass("instapaper_title").first().text();
+                } catch (NullPointerException ignored) {/*ignored*/}
+                try {
+                    authorName = header.getElementsByClass("author").first().text();
+                } catch (NullPointerException ignored) {/*ignored*/}
+                try {
+                    authorTheVergeLink = header.getElementsByClass("author").first()
+                            .getElementsByTag("a").first().attr("href");
+                } catch (NullPointerException ignored) {/*ignored*/}
+                try {
+                    date = header.getElementsByClass("published").first().text();
+                } catch (NullPointerException ignored) {/*ignored*/}
+                try {
+                    sub = header.getElementsByAttributeValueContaining(
+                            "data-remote-headline-edit", "summary").first().text();
+                } catch (NullPointerException ignored) {/*ignored*/}
             }
 
             private void handleArticle(Element article) {
@@ -391,29 +406,53 @@ public class ArticleActivity extends AppCompatActivity {
             }
 
             private void authorAndDate() {
-                if (author == null && date == null) authorTV.setVisibility(View.GONE);
-                else if (author != null && date == null) {
-                    authorTV.setText(author);
-                } else if (author == null) {
-                    // Display only date, without "on"
+                // No author, no date
+                if (authorName == null && date == null) {
+                    authorTV.setVisibility(View.GONE);
+                    return;
+                }
+
+                // Author only
+                else if (authorName != null && date == null) {
+                    authorTV.setText(authorName);
+                }
+
+                // Date only
+                else if (authorName == null) {
+                    // Remove "on "
                     if (date.startsWith("on ")) {
                         date = date.substring(3);
                     }
-                    authorTV.setTextColor(getResources().getColor(android.R.color.darker_gray));
-                    authorTV.setTextSize(getResources().getDimension(R.dimen.article_date_text_size));
                     authorTV.setText(date);
-                } else {
-                    // Display both author and date
-                    SpannableString sString = new SpannableString(author + " " + date);
-                    RelativeSizeSpan sizeSpan = new RelativeSizeSpan(0.8f);
-                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(android.R.color.darker_gray));
-                    sString.setSpan(sizeSpan, author.length(), sString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                    sString.setSpan(colorSpan, author.length(), sString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    return;
+                }
+
+                // Author and date
+                else {
+                    SpannableString sString = new SpannableString(authorName + " " + date);
+
+                    ClickableSpan clickableSpan = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            new AlertDialog.Builder(ArticleActivity.this)
+                                    .setTitle(authorName)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .create().show();
+                        }
+
+                        /*@Override
+                        public void updateDrawState(TextPaint ds) {
+                            super.updateDrawState(ds);
+                            // Change spanned text style here
+                        }*/
+                    };
+                    sString.setSpan(clickableSpan, 3, authorName.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 
                     authorTV.setText(sString);
+                    authorTV.setMovementMethod(LinkMovementMethod.getInstance());
+                    authorTV.setHighlightColor(Color.TRANSPARENT);
                 }
             }
-
         }.execute();
     }
 

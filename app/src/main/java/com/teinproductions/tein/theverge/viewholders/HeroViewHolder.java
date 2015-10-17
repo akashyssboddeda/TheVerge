@@ -10,7 +10,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.teinproductions.tein.theverge.ArticleActivity;
 import com.teinproductions.tein.theverge.R;
-import com.teinproductions.tein.theverge.viewholders.ArticleItemViewHolder;
 
 import org.jsoup.nodes.Element;
 

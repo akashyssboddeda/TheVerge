@@ -18,11 +18,12 @@ import org.jsoup.select.Elements;
 
 public class ArticleListFragment extends Fragment {
     private static final String URL = "URL";
+    private static final String DATA = "data";
 
-    SwipeRefreshLayout srLayout;
-    RecyclerView recyclerView;
-    ArticleListAdapter adapter;
-    String url;
+    private SwipeRefreshLayout srLayout;
+    private RecyclerView recyclerView;
+    private ArticleListAdapter adapter;
+    private String url;
 
     @Nullable
     @Override
