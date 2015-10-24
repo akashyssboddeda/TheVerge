@@ -1,15 +1,25 @@
 package com.teinproductions.tein.theverge;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -137,12 +147,6 @@ public class AuthorActivity extends AppCompatActivity {
         return String.valueOf(chars);
     }
 
-    public static void openActivity(Activity activity, String userURL) {
-        Intent intent = new Intent(activity, AuthorActivity.class);
-        intent.putExtra(VERGE_USER_URL, userURL);
-        activity.startActivity(intent);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -150,5 +154,22 @@ public class AuthorActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    public void onClickViewInBrowser(View view) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+
+        List<ResolveInfo> activities = getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        boolean safe = activities.size() > 0;
+        if (safe) startActivity(intent);
+    }
+
+
+    public static void openActivity(Activity activity, String userURL) {
+        Intent intent = new Intent(activity, AuthorActivity.class);
+        intent.putExtra(VERGE_USER_URL, userURL);
+        activity.startActivity(intent);
     }
 }

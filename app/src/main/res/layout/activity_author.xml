@@ -46,7 +46,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:id="@+id/item_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -59,7 +58,21 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 tools:text="I'm a Bulgarian who moved to London at the age of 12. My passions include watertight grammatical structures, rigorous research, and awesome photography. The greatest single piece of technology I've yet come across is the 2010 MacBook Air." />
+
+            <LinearLayout
+                android:id="@+id/item_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <Button
+                style="?buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:onClick="onClickViewInBrowser"
+                android:text="@string/view_in_browser" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-
 </android.support.design.widget.CoordinatorLayout>
