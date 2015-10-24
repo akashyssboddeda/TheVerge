@@ -43,5 +43,9 @@
         <activity
             android:name=".TagActivity"
             android:label="@string/tag" />
+
+        <activity
+            android:name=".AuthorActivity"
+            android:label="@string/author_info" />
     </application>
 </manifest>

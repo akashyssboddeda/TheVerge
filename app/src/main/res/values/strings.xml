@@ -30,4 +30,6 @@
     <string name="tag_activity_title">Tag: %s</string>
     <string name="search_result_activity_title">Search: %s</string>
     <string name="try_again">Try again</string>
+    <string name="email">Email</string>
+    <string name="author_info">Author info</string>
 </resources>

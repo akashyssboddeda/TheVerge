@@ -409,12 +409,23 @@ public class ArticleActivity extends AppCompatActivity {
                 // No author, no date
                 if (authorName == null && date == null) {
                     authorTV.setVisibility(View.GONE);
-                    return;
                 }
 
                 // Author only
                 else if (authorName != null && date == null) {
-                    authorTV.setText(authorName);
+                    SpannableString sString = new SpannableString(authorName);
+
+                    ClickableSpan clickableSpan = new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            AuthorActivity.openActivity(ArticleActivity.this, authorTheVergeLink);
+                        }
+                    };
+                    sString.setSpan(clickableSpan, 3, authorName.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+                    authorTV.setText(sString);
+                    authorTV.setMovementMethod(LinkMovementMethod.getInstance());
+                    authorTV.setHighlightColor(Color.TRANSPARENT);
                 }
 
                 // Date only
@@ -424,7 +435,6 @@ public class ArticleActivity extends AppCompatActivity {
                         date = date.substring(3);
                     }
                     authorTV.setText(date);
-                    return;
                 }
 
                 // Author and date
@@ -434,10 +444,7 @@ public class ArticleActivity extends AppCompatActivity {
                     ClickableSpan clickableSpan = new ClickableSpan() {
                         @Override
                         public void onClick(View widget) {
-                            new AlertDialog.Builder(ArticleActivity.this)
-                                    .setTitle(authorName)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .create().show();
+                            AuthorActivity.openActivity(ArticleActivity.this, authorTheVergeLink);
                         }
 
                         /*@Override
