@@ -8,15 +8,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -176,6 +175,12 @@ public class ArticleActivity extends AppCompatActivity {
                 } catch (NullPointerException ignored) {/*ignored*/}
             }
 
+            private void handleParagraphs(Element element) {
+                Elements elements = new Elements();
+                elements.add(element);
+                handleParagraphs(elements);
+            }
+
             /**
              * Handle pieces of articles with mainly paragraphs in them.
              * For example: main article content, or "m-snippet thin" div of review.
@@ -186,37 +191,40 @@ public class ArticleActivity extends AppCompatActivity {
                     Element element = elements.get(i);
                     String tagName = element.tagName();
                     if ("p".equals(tagName)) {
-                        if (element.children().size() > 0 && "q".equals(element.child(0).tagName())) {
-                            // Big red italic heading
-                            articlePieces.add(new Whitespace());
-                            articlePieces.add(new Text(element.text(), Text.THEVERGE_HEADER));
-                            articlePieces.add(new Whitespace());
-                        } else if (element.children().size() > 0 && "small".equals(element.child(0).tagName())) {
-                            // Small text:
-                            // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
-                            articlePieces.add(new Text(element.text(), Text.SMALL));
-                        } else if (element.children().size() > 0 && "img".equals(element.child(0).tagName())) {
-                            addImage(element);
-                        } else if (element.html().isEmpty() || element.html().equals(" ")) {
-                            // Add nothing.
-                        } else {
+                        if (element.children().size() > 0) {
+                            Element child;
+                            if ((child = childWithTag(element, "q")) != null) {
+                                handleParagraphs(child);
+                            } else if ((child = childWithTag(element, "small")) != null) {
+                                handleParagraphs(child);
+                            } else if ((child = childWithTag(element, "img")) != null) {
+                                handleParagraphs(child);
+                            } else {
+                                // Regular paragraph
+                                articlePieces.add(new Text(element.html(), Text.PARAGRAPH));
+                            }
+                        } else if (!element.html().isEmpty() && !element.html().equals(" ")) {
                             // Regular paragraph
-                            articlePieces.add(new Text(element.text(), Text.PARAGRAPH));
+                            articlePieces.add(new Text(element.html(), Text.PARAGRAPH));
                         }
                     } else if ("q".equals(tagName)) {
                         // Big red italic heading
                         articlePieces.add(new Whitespace());
-                        articlePieces.add(new Text(element.text(), Text.THEVERGE_HEADER));
+                        articlePieces.add(new Text(element.html(), Text.THEVERGE_HEADER));
                         articlePieces.add(new Whitespace());
+                    } else if ("small".equals(tagName)) {
+                        // Small text:
+                        // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
+                        articlePieces.add(new Text(element.html(), Text.SMALL));
                     } else if ("h2".equals(tagName)) {
                         // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
                         articlePieces.add(new Whitespace());
-                        articlePieces.add(new Text(element.text(), Text.H2HEADER));
+                        articlePieces.add(new Text(element.html(), Text.H2HEADER));
                         articlePieces.add(new Whitespace());
                     } else if ("h3".equals(tagName)) {
                         // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
                         articlePieces.add(new Whitespace());
-                        articlePieces.add(new Text(element.text(), Text.H3HEADER));
+                        articlePieces.add(new Text(element.html(), Text.H3HEADER));
                         articlePieces.add(new Whitespace());
                     } else if ("figure".equals(tagName)) {
                         // www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
@@ -224,13 +232,19 @@ public class ArticleActivity extends AppCompatActivity {
                             String imgURL = element.getElementsByAttribute("data-original").first().attr("data-original");
                             articlePieces.add(new Image(imgURL));
                         } catch (NullPointerException ignored) {/*ignored*/}
-                    } else if ("img".equals(tagName)) {
-                        addImage(element);
-                    } else if ("aside".equals(tagName)) {
+                    } else if ("img".equals(tagName) || "aside".equals(tagName)) {
                         addImage(element);
                     }
                     // TODO handle <ul>: www.theverge.com/2015/7/13/8949959/nasa-new-horizons-pluto-flyby-date-time-livestream
                 }
+            }
+
+            private Element childWithTag(Element element, String tag) {
+                for (Element element1 : element.children()) {
+                    if (element1.tagName().equals(tag))
+                        return element1;
+                }
+                return null;
             }
 
             private void addImage(Element element) {
@@ -352,17 +366,19 @@ public class ArticleActivity extends AppCompatActivity {
                 // Convert 16dp and 5dp padding to px
                 final int px16dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
                 final int px5dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+                final int px8dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
                 //textViewParams.setMargins(px, 0, px, 0);
                 for (int i = 0; i < articlePieces.size(); i++) {
                     ArticlePiece piece = articlePieces.get(i);
                     if (piece instanceof Text) {
                         TextView tv = new TextView(ArticleActivity.this);
-                        tv.setText(((Text) piece).text);
-                        tv.setPadding(px16dp, 0, px16dp, 0);
+                        tv.setMovementMethod(LinkMovementMethod.getInstance());
+                        tv.setText(Html.fromHtml(((Text) piece).text));
+                        tv.setPadding(px16dp, 0, px16dp, px8dp);
 
                         switch (((Text) piece).type) {
                             case Text.PARAGRAPH:
-                                tv.setTextColor(getResources().getColor(android.R.color.black));
+                                tv.setTextColor(Color.BLACK);
                                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                                 break;
                             case Text.H2HEADER:
@@ -385,6 +401,9 @@ public class ArticleActivity extends AppCompatActivity {
                                 tv.setTextColor(getResources().getColor(R.color.colorPrimary));
                                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
                                 tv.setTypeface(null, Typeface.ITALIC);
+                                break;
+                            case Text.SMALL:
+                                tv.setPadding(px8dp, 0, px8dp, px8dp);
                         }
 
                         ll.addView(tv, textViewParams);
