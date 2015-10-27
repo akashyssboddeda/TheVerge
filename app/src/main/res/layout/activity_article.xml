@@ -21,13 +21,25 @@
             app:expandedTitleMarginEnd="64dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/articleMainImage"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax">
+
+                <ImageView
+                    android:id="@+id/articleMainImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/image_gradient"
+                    android:fitsSystemWindows="true" />
+            </FrameLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -87,10 +99,10 @@
                 android:orientation="vertical" />
 
             <View
-                android:layout_marginBottom="8dp"
                 android:id="@+id/article_source_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginBottom="8dp"
                 android:background="@android:color/darker_gray" />
 
             <LinearLayout
@@ -134,11 +146,11 @@
             </LinearLayout>
 
             <Button
+                style="?buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/view_in_browser"
-                style="?buttonBarButtonStyle"
-                android:onClick="onClickViewInBrowser"/>
+                android:onClick="onClickViewInBrowser"
+                android:text="@string/view_in_browser" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
