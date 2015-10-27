@@ -1,11 +1,16 @@
 package com.teinproductions.tein.theverge;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +21,7 @@ import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -78,6 +84,15 @@ public class ArticleActivity extends AppCompatActivity {
         Intent intent = new Intent(context, ArticleActivity.class);
         intent.putExtra(ArticleActivity.ARTICLE_URL, url);
         context.startActivity(intent);
+    }
+
+    public void onClickViewInBrowser(View view) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(articleURL));
+
+        List<ResolveInfo> activities = getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        boolean safe = activities.size() > 0;
+        if (safe) startActivity(intent);
     }
 
     interface ArticlePiece {
@@ -554,11 +569,25 @@ public class ArticleActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (Build.VERSION.SDK_INT >= 11) {
+            getMenuInflater().inflate(R.menu.menu_article, menu);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.copy_url:
+                if (Build.VERSION.SDK_INT >= 11) {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    clipboard.setPrimaryClip(ClipData.newPlainText("The Verge URL", articleURL));
+                }
         }
         return false;
     }

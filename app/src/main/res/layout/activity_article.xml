@@ -132,6 +132,13 @@
                     tools:text="Texas, Austin"
                     tools:textColor="@android:color/holo_red_light" />
             </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/view_in_browser"
+                style="?buttonBarButtonStyle"
+                android:onClick="onClickViewInBrowser"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -152,7 +152,6 @@ public class AuthorActivity extends AppCompatActivity {
 
     public void onClickViewInBrowser(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
 
         List<ResolveInfo> activities = getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
