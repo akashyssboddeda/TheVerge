@@ -45,11 +45,9 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title"
@@ -81,6 +79,59 @@
                 android:textSize="18sp"
                 android:textStyle="italic"
                 tools:text="In a rural corner of the Midwest, GE pushes its next-generation jet engines to their limits" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <View
+                android:layout_marginBottom="8dp"
+                android:id="@+id/article_source_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <TextView
+                    android:id="@+id/article_source_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Source"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/article_source_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    tools:text="Texas, Austin"
+                    tools:textColor="@android:color/holo_red_light" />
+
+                <TextView
+                    android:id="@+id/related_items_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Related items"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/related_items_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    tools:text="Texas, Austin"
+                    tools:textColor="@android:color/holo_red_light" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

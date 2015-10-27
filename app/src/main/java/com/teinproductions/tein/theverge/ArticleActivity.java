@@ -14,7 +14,6 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -117,6 +116,7 @@ public class ArticleActivity extends AppCompatActivity {
             private String title, date, sub, imgSrc;
             private String authorName, authorTheVergeLink;
             private List<ArticlePiece> articlePieces = new ArrayList<>();
+            private String source, relatedItems;
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -137,6 +137,8 @@ public class ArticleActivity extends AppCompatActivity {
                     } else if (article.classNames().contains("m-feature")) {
                         handleFeature(article);
                     }
+
+                    parseArticleSource();
 
                     return null;
                 } catch (IOException e) {
@@ -164,6 +166,40 @@ public class ArticleActivity extends AppCompatActivity {
                     sub = header.getElementsByAttributeValueContaining(
                             "data-remote-headline-edit", "summary").first().text();
                 } catch (NullPointerException ignored) {/*ignored*/}
+            }
+
+            private void parseArticleSource() {
+                Element ul = doc.getElementsByClass("m-article__sources").first();
+                if (ul == null) return;
+
+                for (Element li : ul.children()) {
+                    try {
+                        if (!"li".equals(li.tagName())) continue;
+                        if (li.classNames().contains("source")) {
+                            source = li.getElementsByTag("a").first().outerHtml();
+                        } else if (li.classNames().contains("tags")) {
+                            Elements as = li.getElementsByTag("a");
+                            as.first().attr("href", makeValidURL(as.first().attr("href")));
+                            relatedItems = as.first().outerHtml();
+                            for (int i = 1; i < as.size(); i++) {
+                                as.get(i).attr("href", makeValidURL(as.get(i).attr("href")));
+                                relatedItems += ", " + as.get(i).outerHtml();
+                            }
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            /**
+             * For example: "/tag/google" becomes "http://www.theverge.com/tag/google"
+             * @param urlBefore URL to validate
+             * @return Valid URL
+             */
+            private String makeValidURL(String urlBefore) {
+                if (urlBefore.startsWith("/")) return "http://www.theverge.com" + urlBefore;
+                else return urlBefore;
             }
 
             private void handleArticle(Element article) {
@@ -351,6 +387,7 @@ public class ArticleActivity extends AppCompatActivity {
                 if (sub == null) subTV.setVisibility(View.GONE);
                 else subTV.setText(sub);
                 authorAndDate();
+                sourceAndTags();
 
                 if (imgSrc != null) {
                     Picasso.with(ArticleActivity.this).load(imgSrc).into(mainImg);
@@ -477,6 +514,40 @@ public class ArticleActivity extends AppCompatActivity {
                     authorTV.setText(sString);
                     authorTV.setMovementMethod(LinkMovementMethod.getInstance());
                     authorTV.setHighlightColor(Color.TRANSPARENT);
+                }
+            }
+
+            private void sourceAndTags() {
+                TextView articleSourceTitle = (TextView) findViewById(R.id.article_source_title),
+                        articleSourceContent = (TextView) findViewById(R.id.article_source_content),
+                        relatedItemsTitle = (TextView) findViewById(R.id.related_items_title),
+                        relatedItemsContent = (TextView) findViewById(R.id.related_items_content);
+
+                if (source == null) {
+                    articleSourceTitle.setVisibility(View.GONE);
+                    articleSourceContent.setVisibility(View.GONE);
+                } else {
+                    articleSourceTitle.setVisibility(View.VISIBLE);
+                    articleSourceContent.setVisibility(View.VISIBLE);
+                    articleSourceContent.setText(Html.fromHtml(source));
+                    articleSourceContent.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+
+                if (relatedItems == null) {
+                    relatedItemsContent.setVisibility(View.GONE);
+                    relatedItemsTitle.setVisibility(View.GONE);
+                } else {
+                    relatedItemsContent.setVisibility(View.VISIBLE);
+                    relatedItemsTitle.setVisibility(View.VISIBLE);
+                    relatedItemsContent.setText(Html.fromHtml(relatedItems));
+                    relatedItemsContent.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+
+                View divider = findViewById(R.id.article_source_divider);
+                if (relatedItems == null && source == null) {
+                    divider.setVisibility(View.GONE);
+                } else {
+                    divider.setVisibility(View.VISIBLE);
                 }
             }
         }.execute();
