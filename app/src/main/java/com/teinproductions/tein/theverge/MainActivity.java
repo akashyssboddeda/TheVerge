@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,7 +21,7 @@ import android.widget.EditText;
 
 import com.teinproductions.tein.theverge.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends CTActivity implements NavigationView.OnNavigationItemSelectedListener {
     /* -- SKETCH --
      * - HeroTabFragment with tabs, hosts:
      * - ArticleListAdapter with several ViewHolders

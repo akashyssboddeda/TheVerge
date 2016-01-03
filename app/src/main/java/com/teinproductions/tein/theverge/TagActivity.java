@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import org.jsoup.select.Elements;
 
-public class TagActivity extends AppCompatActivity {
+public class TagActivity extends CTActivity {
     public static final String TAG_NAME = "tag_name";
 
     private String tagName;

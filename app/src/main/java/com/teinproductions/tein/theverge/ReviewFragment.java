@@ -27,7 +27,7 @@ public class ReviewFragment extends Fragment {
         srLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ArticleListAdapter(getContext(), new Elements());
+        adapter = new ArticleListAdapter((CTActivity) getActivity(), new Elements());
         recyclerView.setAdapter(adapter);
 
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

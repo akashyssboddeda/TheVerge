@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.teinproductions.tein.theverge.ArticleActivity;
+import com.teinproductions.tein.theverge.CTActivity;
 import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
@@ -28,7 +29,7 @@ public class HeroViewHolder extends ArticleItemViewHolder {
     }
 
     @Override
-    public void bind(Element element) {
+    public void bind(final CTActivity activity, Element element) {
         image.setImageDrawable(null);
         String imageURL = parseImageURL(element);
         Picasso.with(itemView.getContext()).load(imageURL).into(image, new Callback() {
@@ -52,7 +53,7 @@ public class HeroViewHolder extends ArticleItemViewHolder {
             public void onClick(View v) {
                 // TODO: 9-7-2015 Check if href is not a re/code web page
                 if (articleLink != null) {
-                    ArticleActivity.openArticle(itemView.getContext(), articleLink);
+                    ArticleActivity.openArticle(activity, articleLink);
                 }
             }
         });

@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.teinproductions.tein.theverge.CTActivity;
 import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
@@ -24,7 +25,7 @@ public class ProductViewHolder extends ArticleItemViewHolder {
     }
 
     @Override
-    public void bind(Element element) {
+    public void bind(CTActivity activity, Element element) {
         parseProductName(element);
         parseProductBrand(element);
         parseImage(element);

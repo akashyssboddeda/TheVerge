@@ -33,7 +33,7 @@ public class ArticleListFragment extends Fragment {
         srLayout = new SwipeRefreshLayout(getActivity());
         recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new ArticleListAdapter(getActivity(), new Elements());
+        adapter = new ArticleListAdapter((CTActivity) getActivity(), new Elements());
         recyclerView.setAdapter(adapter);
         srLayout.addView(recyclerView);
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

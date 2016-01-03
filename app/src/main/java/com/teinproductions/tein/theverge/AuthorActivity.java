@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuthorActivity extends AppCompatActivity {
+public class AuthorActivity extends CTActivity {
     private static final String VERGE_USER_URL = "user_url";
 
     private String url;

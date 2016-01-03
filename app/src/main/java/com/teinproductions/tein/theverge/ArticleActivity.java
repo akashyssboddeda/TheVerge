@@ -2,7 +2,6 @@ package com.teinproductions.tein.theverge;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -12,8 +11,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spannable;
@@ -39,9 +38,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArticleActivity extends AppCompatActivity {
+public class ArticleActivity extends CTActivity {
     // TODO: 8-9-2015 This-is-my-next-articles: http://www.theverge.com/2014/11/26/7290751/best-action-camera-you-can-buy
-
+    public static final String USE_ARTICLE_VIEWER_PREFERENCE = "OPEN_ARTICLES_IN_ARTICLE_VIEWER";
     public static final String ARTICLE_URL = "ARTICLE_URL";
 
     private String articleURL;
@@ -80,10 +79,15 @@ public class ArticleActivity extends AppCompatActivity {
         }
     }
 
-    public static void openArticle(Context context, String url) {
-        Intent intent = new Intent(context, ArticleActivity.class);
-        intent.putExtra(ArticleActivity.ARTICLE_URL, url);
-        context.startActivity(intent);
+    public static void openArticle(CTActivity activity, String url) {
+        if (PreferenceManager.getDefaultSharedPreferences(activity)
+                .getBoolean(USE_ARTICLE_VIEWER_PREFERENCE, false)) {
+            Intent intent = new Intent(activity, ArticleActivity.class);
+            intent.putExtra(ArticleActivity.ARTICLE_URL, url);
+            activity.startActivity(intent);
+        } else if (activity.tabsHelper != null) {
+            activity.tabsHelper.openURL(activity, url);
+        }
     }
 
     public void onClickViewInBrowser(View view) {

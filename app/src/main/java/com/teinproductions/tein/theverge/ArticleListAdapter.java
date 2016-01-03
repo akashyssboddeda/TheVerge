@@ -1,6 +1,5 @@
 package com.teinproductions.tein.theverge;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -20,11 +19,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
     private static final int SEARCH_ITEM = 2;
     private static final int PRODUCT_ITEM = 3;
 
-    Context context;
+    CTActivity activity;
     Elements data;
 
-    public ArticleListAdapter(Context context, Elements data) {
-        this.context = context;
+    public ArticleListAdapter(CTActivity activity, Elements data) {
+        this.activity = activity;
         this.data = data;
     }
 
@@ -41,20 +40,20 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleItemViewHold
     public ArticleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case HERO_ITEM:
-                return new HeroViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_hero, parent, false));
+                return new HeroViewHolder(LayoutInflater.from(activity).inflate(R.layout.list_item_hero, parent, false));
             case REVIEW_ITEM:
-                return new ReviewViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false));
+                return new ReviewViewHolder(LayoutInflater.from(activity).inflate(R.layout.list_item_review, parent, false));
             case SEARCH_ITEM:
-                return new SearchViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_search, parent, false));
+                return new SearchViewHolder(LayoutInflater.from(activity).inflate(R.layout.list_item_search, parent, false));
             case PRODUCT_ITEM:
-                return new ProductViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item_product, parent, false));
+                return new ProductViewHolder(LayoutInflater.from(activity).inflate(R.layout.list_item_product, parent, false));
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(ArticleItemViewHolder holder, int position) {
-        holder.bind(data.get(position));
+        holder.bind(activity, data.get(position));
     }
 
     @Override

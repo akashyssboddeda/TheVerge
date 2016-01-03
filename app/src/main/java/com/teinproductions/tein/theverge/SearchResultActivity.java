@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class SearchResultActivity extends CTActivity {
     public static final String QUERY = "query";
     private static final String DATA = "data";
 

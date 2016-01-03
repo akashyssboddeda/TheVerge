@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.teinproductions.tein.theverge.ArticleActivity;
+import com.teinproductions.tein.theverge.CTActivity;
 import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
@@ -26,13 +27,13 @@ public class SearchViewHolder extends ArticleItemViewHolder {
         root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (articleURL != null) ArticleActivity.openArticle(itemView.getContext(), articleURL);
+                if (articleURL != null) ArticleActivity.openArticle((CTActivity) itemView.getContext(), articleURL);
             }
         });
     }
 
     @Override
-    public void bind(Element element) {
+    public void bind(CTActivity activity, Element element) {
         title.setText(parseTitle(element));
         byline.setText(parseByline(element));
         blurb.setText(parseBlurb(element));

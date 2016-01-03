@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.teinproductions.tein.theverge.ArticleActivity;
+import com.teinproductions.tein.theverge.CTActivity;
 import com.teinproductions.tein.theverge.R;
 
 import org.jsoup.nodes.Element;
@@ -33,13 +34,13 @@ public class ReviewViewHolder extends ArticleItemViewHolder {
             @Override
             public void onClick(View v) {
                 if (articleURL != null && URLUtil.isValidUrl(articleURL))
-                    ArticleActivity.openArticle(ReviewViewHolder.this.itemView.getContext(), articleURL);
+                    ArticleActivity.openArticle((CTActivity) ReviewViewHolder.this.itemView.getContext(), articleURL);
             }
         });
     }
 
     @Override
-    public void bind(Element element) {
+    public void bind(CTActivity activity, Element element) {
         parseTitle(element);
         parseBlurb(element);
         parsePrice(element);
