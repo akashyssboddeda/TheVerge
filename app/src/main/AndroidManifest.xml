@@ -47,5 +47,9 @@
         <activity
             android:name=".AuthorActivity"
             android:label="@string/author_info" />
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings" />
     </application>
 </manifest>

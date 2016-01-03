@@ -35,4 +35,11 @@
             android:id="@+id/tag"
             android:title="@string/tag_ellipses" />
     </group>
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/settings"
+                android:title="@string/settings" />
+        </menu>
+    </item>
 </menu>

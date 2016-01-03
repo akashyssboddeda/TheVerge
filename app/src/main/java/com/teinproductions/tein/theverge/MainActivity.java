@@ -20,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.teinproductions.tein.theverge.settings.SettingsActivity;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /* -- SKETCH --
      * - HeroTabFragment with tabs, hosts:
@@ -131,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
                 break;
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
             default:
                 return false;
         }
