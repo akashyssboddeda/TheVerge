@@ -1,13 +1,7 @@
 /.gradle
 /.idea
 /build
-/gradle
 .DS_Store
 /captures
-/build.gradle
-/gradle.properties
-/gradlew
-/gradlew.bat
 /local.properties
-/settings.gradle
 /TheVerge.iml
