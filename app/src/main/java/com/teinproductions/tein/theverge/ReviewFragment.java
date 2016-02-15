@@ -11,7 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.teinproductions.tein.theverge.models.Hero;
+
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 
 public class ReviewFragment extends Fragment {
 
@@ -27,7 +31,7 @@ public class ReviewFragment extends Fragment {
         srLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ArticleListAdapter((CTActivity) getActivity(), new Elements());
+        adapter = new ArticleListAdapter((CTActivity) getActivity(), null);
         recyclerView.setAdapter(adapter);
 
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -51,12 +55,12 @@ public class ReviewFragment extends Fragment {
         new DownloadAsyncTask(getContext(), new DownloadAsyncTask.OnLoadingFinishedListener() {
             @Override
             public void onCacheLoaded(Elements cache) {
-                adapter.setData(cache);
+                adapter.setData(null);
             }
 
             @Override
             public void onWebLoaded(Elements result) {
-                adapter.setData(result);
+                adapter.setData(null);
                 srLayout.setRefreshing(false);
             }
 

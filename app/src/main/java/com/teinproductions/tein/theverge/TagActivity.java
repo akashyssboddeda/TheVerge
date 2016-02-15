@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +40,7 @@ public class TagActivity extends CTActivity {
         srLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ArticleListAdapter(this, new Elements());
+        adapter = new ArticleListAdapter(this, null);
         recyclerView.setAdapter(adapter);
 
         srLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -58,7 +57,7 @@ public class TagActivity extends CTActivity {
         new DownloadAsyncTask(this, new DownloadAsyncTask.OnLoadingFinishedListener() {
             @Override
             public void onCacheLoaded(Elements cache) {
-                adapter.setData(cache);
+                adapter.setData(null);
                 recyclerView.setVisibility(View.VISIBLE);
                 errorMessageLayout.setVisibility(View.GONE);
             }
@@ -66,7 +65,7 @@ public class TagActivity extends CTActivity {
             @Override
             public void onWebLoaded(Elements result) {
                 srLayout.setRefreshing(false);
-                adapter.setData(result);
+                adapter.setData(null);
                 recyclerView.setVisibility(View.VISIBLE);
                 errorMessageLayout.setVisibility(View.GONE);
             }

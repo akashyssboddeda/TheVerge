@@ -41,7 +41,7 @@ public class SearchResultActivity extends CTActivity {
         errorTextView = (TextView) findViewById(R.id.error_textView);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ArticleListAdapter(this, new Elements());
+        adapter = new ArticleListAdapter(this, null);
         recyclerView.setAdapter(adapter);
 
         loadData(savedInstanceState);
@@ -50,7 +50,7 @@ public class SearchResultActivity extends CTActivity {
     private void loadData(Bundle savedInstanceState) {
         Elements data;
         if (savedInstanceState != null && (data = (Elements) savedInstanceState.getSerializable(DATA)) != null) {
-            adapter.setData(data);
+            adapter.setData(null);
         } else {
             refresh();
         }
@@ -63,10 +63,10 @@ public class SearchResultActivity extends CTActivity {
             @Override
             protected Elements doInBackground(Void... params) {
                 try {
-                    if (ArticleListFragment.checkNotConnected(SearchResultActivity.this)) {
+                    /*if (ArticleListFragment.checkNotConnected(SearchResultActivity.this)) {
                         errorMessage = getString(R.string.no_connection_established);
                         return null;
-                    }
+                    }*/
 
                     Document doc = Jsoup.connect("http://www.theverge.com/search?q=" + query).get();
                     return doc.getElementsByClass("p-basic-article-list__node");
@@ -84,7 +84,7 @@ public class SearchResultActivity extends CTActivity {
                     errorTextView.setVisibility(View.VISIBLE);
                     errorTextView.setText(errorMessage);
                 } else {
-                    adapter.setData(elements);
+                    adapter.setData(null);
                 }
             }
         }.execute();
